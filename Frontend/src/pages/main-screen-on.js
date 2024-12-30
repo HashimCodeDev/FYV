@@ -9,7 +9,7 @@ const MainScreenON = (props) => {
   return (
     <div className='main-screen-on-container'>
       <Helmet>
-        <title>exported project</title>
+        <title>FYV</title>
       </Helmet>
       <div className='main-screen-on-main-screen-on'>
         <div className='main-screen-on-sidebar'>

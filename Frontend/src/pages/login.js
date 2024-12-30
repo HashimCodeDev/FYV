@@ -9,7 +9,7 @@ const Login = (props) => {
   return (
     <div className='login-container'>
       <Helmet>
-        <title>exported project</title>
+        <title>FYV</title>
       </Helmet>
       <div className='login-login'>
         <img

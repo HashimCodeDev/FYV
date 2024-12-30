@@ -9,7 +9,7 @@ const Homepage = (props) => {
   return (
     <div className='homepage-container'>
       <Helmet>
-        <title>exported project</title>
+        <title>FYV</title>
       </Helmet>
       <div className='homepage-homepage'>
         <div className='homepage-content'>

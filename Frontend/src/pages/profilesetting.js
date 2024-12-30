@@ -8,7 +8,7 @@ const Profilesetting = (props) => {
   return (
     <div className='profilesetting-container'>
       <Helmet>
-        <title>exported project</title>
+        <title>FYV</title>
       </Helmet>
       <div className='profilesetting-profilesetting'>
         <img

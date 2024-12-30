@@ -9,7 +9,7 @@ const MainScreenOFF = (props) => {
   return (
     <div className='main-screen-off-container'>
       <Helmet>
-        <title>exported project</title>
+        <title>FYV</title>
       </Helmet>
       <div className='main-screen-off-main-screen-off'>
         <div className='main-screen-off-sidebar'>
