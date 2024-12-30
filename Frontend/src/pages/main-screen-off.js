@@ -15,7 +15,7 @@ const MainScreenOFF = (props) => {
         <div className='main-screen-off-sidebar'>
           <div className='main-screen-off-header1'>
             <img
-              src='/external/vibenobmg13410-eygl-200w.png'
+              src='/external/fyv_nobmg.png'
               alt='vibenoBmg13410'
               className='main-screen-off-vibeno-bmg1'
             />
