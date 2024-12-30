@@ -1,0 +1,147 @@
+.homepage-container {
+  width: 100%;
+  display: flex;
+  overflow: auto;
+  min-height: 100vh;
+  align-items: center;
+  flex-direction: column;
+}
+ 
+.homepage-homepage {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-self: stretch;
+  align-items: flex-start;
+  flex-shrink: 0;
+  flex-direction: column;
+}
+ 
+.homepage-content {
+  display: flex;
+  flex-grow: 1;
+  align-self: stretch;
+  align-items: flex-start;
+}
+ 
+.homepage-page {
+  gap: 20px;
+  display: flex;
+  padding: 0 0 30px;
+  overflow: hidden;
+  position: relative;
+  flex-grow: 1;
+  align-self: stretch;
+  align-items: flex-start;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 1);
+}
+ 
+.homepage-home-upper {
+  gap: 10px;
+  display: flex;
+  align-self: stretch;
+  align-items: flex-start;
+  flex-direction: column;
+}
+ 
+.homepage-frame28988 {
+  gap: 10px;
+  width: 1440px;
+  height: 650px;
+  display: flex;
+  position: relative;
+  align-self: stretch;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+ 
+.homepage-image4 {
+  top: 68px;
+  left: 0px;
+  width: 1440px;
+  height: 955px;
+  position: absolute;
+}
+ 
+.homepage-rectangle474 {
+  top: 0px;
+  left: 0px;
+  width: 1512px;
+  height: 68px;
+  position: absolute;
+}
+ 
+.homepage-text1 {
+  top: 251px;
+  left: 41px;
+  color: rgba(255, 255, 255, 1);
+  width: 1429px;
+  height: auto;
+  position: absolute;
+  font-size: 64px;
+  font-style: Bold;
+  text-align: left;
+  font-family: Roboto;
+  font-weight: 700;
+  line-height: 64px;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.homepage-navlink {
+  display: contents;
+}
+ 
+.homepage-login {
+  top: 25px;
+  left: 1342px;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  text-decoration: none;
+}
+ 
+.homepage-text5 {
+  top: 7px;
+  left: 1373px;
+  color: rgba(0, 0, 0, 1);
+  height: auto;
+  position: absolute;
+  font-size: 16px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Khmer;
+  font-weight: 400;
+  line-height: 64px;
+  font-stretch: normal;
+  text-decoration: none;
+}
+ 
+.homepage-vibeno-bmg1 {
+  top: 3px;
+  left: 8px;
+  width: 65px;
+  height: 62px;
+  position: absolute;
+}
+ 
+.homepage-controls {
+  gap: 20px;
+  width: 802px;
+  display: flex;
+  z-index: 1;
+  position: relative;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: center;
+}
+ 
+.homepage-wrapper {
+  gap: 10px;
+  display: flex;
+  padding: 0 0 0 30px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
