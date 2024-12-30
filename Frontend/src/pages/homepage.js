@@ -13,7 +13,7 @@ const Homepage = () => {
         {' '}
         {/* Use semantic header element */}
         <img
-          src='/external/vibenobmg11617-6qz7-200h.png'
+          src='/external/fyv_nobmg.png'
           alt='FYV Logo'
           className='homepage-logo'
         />
