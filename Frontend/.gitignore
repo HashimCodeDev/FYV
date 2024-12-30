@@ -10,15 +10,6 @@
 # macOS specific files
 /.DS_Store
 
-# Locales folder 
-/locales/
-
-# Craco configuration file 
-craco.config.js
-
-# Lock file
-package-lock.json
-
 # Node-related files that shouldn't be tracked
 npm-debug.log*
 yarn-debug.log*
