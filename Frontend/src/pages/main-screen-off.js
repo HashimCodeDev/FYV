@@ -29,9 +29,9 @@ const MainScreenOFF = (props) => {
                 className='main-screen-off-settings2'
               />
               <Link
-                to='/profilesetting'
+                to='/'
                 className='main-screen-off-text2 Title'>
-                Settings
+                Sign Out
               </Link>
             </div>
           </div>
