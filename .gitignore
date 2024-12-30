@@ -2,3 +2,7 @@ node_modules/
 build/
 .env
 .DS_Store
+locales/
+craco.config.js
+package-lock.json
+package.json
