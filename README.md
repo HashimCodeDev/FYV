@@ -2,9 +2,9 @@
 
 This repository houses the code for the FYV , a web-based platform designed to bridge the gap and foster meaningful connections within the college community. We understand that college life can sometimes feel isolating, and finding friends outside your immediate circle can be a challenge. Traditional social media often falls short in facilitating genuine, face-to-face interactions.
 
-**That's where FYV Chat comes in.**
+**That's where FYV comes in.**
 
-FYV Chat offers a unique space for college students to connect through anonymous, interest-based, and random text and video chats. Whether you're looking for a study buddy, want to discover new interests, or simply need someone to chat with, FYV provides a safe and moderated environment to connect with like-minded individuals.
+FYV offers a unique space for college students to connect through anonymous, interest-based, and random text and video chats. Whether you're looking for a study buddy, want to discover new interests, or simply need someone to chat with, FYV provides a safe and moderated environment to connect with like-minded individuals.
 
 **Key Features:**
 
