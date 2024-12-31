@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import './styles/global.css'; // Corrected import path
-import MainScreenON from './pages/main-screen-on';
+import Chatroom from './pages/chatroom';
 import Login from './pages/login';
 import Homepage from './pages/homepage';
 import Profilesetting from './pages/profilesetting';
@@ -22,8 +22,8 @@ const App = () => {
         {' '}
         {/* Use Routes */}
         <Route
-          path='/main-screen-on'
-          element={<MainScreenON />}
+          path='/chatroom'
+          element={<Chatroom />}
         />{' '}
         {/* Use element prop */}
         <Route
