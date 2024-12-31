@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Helmet } from 'react-helmet';
 
-import '../styles/main-screen-on.css';
+import '../styles/chatroom.css';
 
-const MainScreenON = () => {
+const Chatroom = () => {
   const [time, setTime] = useState(0);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [micEnabled, setMicEnabled] = useState(true);
@@ -64,119 +64,124 @@ const MainScreenON = () => {
   };
 
   return (
-    <div className='main-screen-on-container'>
+    <div className='chatroom-container'>
       <Helmet>
         <title>FYV</title>
       </Helmet>
-      <div className='main-screen-on-main-screen-on'>
+      <div className='chatroom-main'>
         {/* Sidebar */}
-        <div className='main-screen-on-sidebar'>
-          <div className='main-screen-on-header1'>
+        <div className='chatroom-sidebar'>
+          <div className='chatroom-header'>
             <img
               src='/external/fyv_nobmg.png'
               alt='FYV logo'
-              className='main-screen-on-vibeno-bmg1'
+              className='chatroom-logo'
             />
-            <span className='main-screen-on-text10'>FYV</span>
+            <span className='chatroom-title'>FYV</span>
           </div>
         </div>
 
         {/* Main content */}
-        <div className='main-screen-on-main'>
+        <div className='chatroom-content'>
           {/* Header */}
-          <div className='main-screen-on-header2'>
-            <div className='main-screen-on-left'>
-              <span className='main-screen-on-text11'>Chatroom</span>
-              <div className='main-screen-on-duration'>
-                <span className='main-screen-on-text12 Body1(Medium)'>
-                  ({formatTime(time)})
-                </span>
+          <div className='chatroom-header'>
+            <div className='chatroom-left'>
+              <span className='chatroom-chatroom'>Chatroom</span>
+              <div className='chatroom-duration'>
+                <span className='chatroom-time'>({formatTime(time)})</span>
               </div>
             </div>
-            <div className='main-screen-on-right'>
-              <img
-                src='/external/morevertical4246-xt6.svg'
-                alt='More options'
-                className='main-screen-on-morevertical'
-              />
-              <div className='main-screen-on-input-button'>
-                <span className='main-screen-on-text13 Body1(Medium)'>
+            <div className='chatroom-right'>
+              <div className='chatroom-next-room'>
+                <span className='chatroom-next-room-text'>
                   Next room (Spacebar)
                 </span>
                 <img
                   src='/external/arrowforwardi424-faqf.svg'
                   alt='Next room'
-                  className='main-screen-on-arrowforward'
+                  className='chatroom-next-room-icon'
                 />
               </div>
+              <img
+                src='/external/morevertical4246-xt6.svg'
+                alt='More options'
+                className='chatroom-more-options'
+              />
             </div>
           </div>
 
           {/* Content */}
-          <div className='main-screen-on-content'>
-            {/* Video Stream */}
-            <div className='main-screen-on-video-stream'>
-              <div className='main-screen-on-camera1'>
-                <div className='main-screen-on-controls1'>
-                  <span className='main-screen-on-text14 Body1(Medium)'>
+          <div className='chatroom-main-content'>
+            /* Video Stream */
+            <div className='chatroom-video-stream'>
+              <div className='chatroom-camera'>
+                <div className='chatroom-video-controls'>
+                  <span className='chatroom-video-disabled'>
                     Video disabled
                   </span>
                   <img
                     src='/external/eyeoff4254-1zar.svg'
                     alt='Video disabled icon'
-                    className='main-screen-on-eyeoff'
+                    className='chatroom-video-disabled-icon'
                   />
                 </div>
               </div>
-              <div className='main-screen-on-camera2'>
+              <div className='chatroom-camera'>
                 {videoEnabled && (
                   <Webcam
                     audio={micEnabled}
                     mirrored
-                    className='main-screen-on-camera2'
+                    className='chatroom-webcam'
                   />
                 )}
               </div>
-              <div className='main-screen-on-controls2'>
-                <div className='main-screen-on-middle'>
+              <div className='chatroom-camera'>
+                <video
+                  id='remote-video'
+                  autoPlay
+                  playsInline
+                  className='chatroom-webcam'></video>
+              </div>
+              <div className='chatroom-controls'>
+                <div className='chatroom-middle-controls'>
                   <div
-                    className='main-screen-on-control1'
+                    className='chatroom-video-toggle'
                     onClick={toggleVideo}>
                     <img
                       src={
                         videoEnabled
-                          ? '/external/video4259-zxik.svg'
-                          : '/external/videooff.png'
+                          ? '/external/videoon.svg'
+                          : '/external/videooff.svg'
                       }
                       alt='Video toggle'
-                      className='main-screen-on-video'
+                      className='chatroom-video-icon'
                     />
                   </div>
                   <div
-                    className='main-screen-on-control2'
+                    className='chatroom-mic-toggle'
                     onClick={toggleMic}>
                     <img
                       src={
                         micEnabled
-                          ? '/external/micon.png'
-                          : '/external/micoff4261-wg1j.svg'
+                          ? '/external/micon.svg'
+                          : '/external/micoff.svg'
                       }
                       alt='Mic toggle'
-                      className='main-screen-on-mic'
+                      className='chatroom-mic-icon'
                     />
                   </div>
                 </div>
-                <div className='main-screen-on-wrapper'>
+                <div className='chatroom-leave-room'>
                   <Link
                     to='/main-screen-off'
-                    className='main-screen-on-navlink'>
-                    <div className='main-screen-on-control3'>
+                    className='chatroom-leave-room-link'>
+                    <div className='chatroom-leave-room-button'>
                       <img
                         src='/external/closelight4264-tfpn.svg'
                         alt='Leave room icon'
-                        className='main-screen-on-close-light'
+                        className='chatroom-leave-room-icon'
                       />
-                      <span className='main-screen-on-text15 Body1(Medium)'>
+                      <span className='chatroom-leave-room-text'>
                         Leave Room
                       </span>
                     </div>
@@ -184,42 +189,39 @@ const MainScreenON = () => {
                 </div>
               </div>
             </div>
-
             {/* Chat Section */}
-            <div className='main-screen-on-chat'>
+            <div className='chatroom-chat'>
               <div
-                className='main-screen-on-message-history'
+                className='chatroom-message-history'
                 id='message-history'>
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`main-screen-on-message-wrap ${
+                    className={`chatroom-message-wrap ${
                       message.isUser ? 'user-message' : 'received-message'
                     }`}>
-                    <div className='main-screen-on-message'>
-                      <span className='main-screen-on-text Body1'>
+                    <div className='chatroom-message'>
+                      <span className='chatroom-message-text'>
                         {message.text}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className='main-screen-on-controls3'>
-                <div className='main-screen-on-new-message-wrap'>
-                  <input
-                    type='text'
-                    placeholder='Type a message'
-                    className='main-screen-on-text20 Body1'
-                    id='message-input'
-                    onKeyPress={handleKeyPress}
-                  />
-                  <img
-                    src='/external/send4282-eyt7.svg'
-                    alt='Send icon'
-                    className='main-screen-on-send'
-                    onClick={sendMessage}
-                  />
-                </div>
+              <div className='chatroom-new-message'>
+                <input
+                  type='text'
+                  placeholder='Type a message'
+                  className='chatroom-message-input'
+                  id='message-input'
+                  onKeyPress={handleKeyPress}
+                />
+                <img
+                  src='/external/send4282-eyt7.svg'
+                  alt='Send icon'
+                  className='chatroom-send-icon'
+                  onClick={sendMessage}
+                />
               </div>
             </div>
           </div>
@@ -229,4 +231,4 @@ const MainScreenON = () => {
   );
 };
 
-export default MainScreenON;
+export default Chatroom;

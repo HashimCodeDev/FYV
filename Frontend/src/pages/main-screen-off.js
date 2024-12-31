@@ -55,7 +55,7 @@ const MainScreenOFF = (props) => {
                 </div>
               </div>
               <Link
-                to='/main-screen-on'
+                to='/Chatroom'
                 className='main-screen-off-navlink1'>
                 <div className='main-screen-off-message'>
                   <span className='main-screen-off-text5'>JOIN A NEW ROOM</span>
