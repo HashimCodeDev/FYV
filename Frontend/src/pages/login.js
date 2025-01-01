@@ -34,6 +34,10 @@ const Login = () => {
     }
   };
 
+  const handleCollegeIdSignIn = () => {
+    window.location.href = '/scanid';
+  };
+
   return (
     <div className='login-container'>
       <Helmet>
@@ -115,7 +119,8 @@ const Login = () => {
           {/* Sign In with ID */}
           <button
             type='button'
-            className='secondary-button'>
+            className='secondary-button'
+            onClick={handleCollegeIdSignIn}>
             <img
               src='/external/qrcode.png'
               alt='QR Code Icon'

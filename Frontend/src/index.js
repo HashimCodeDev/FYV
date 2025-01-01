@@ -14,6 +14,7 @@ import Homepage from './pages/homepage';
 import Profilesetting from './pages/profilesetting';
 import MainScreenOFF from './pages/main-screen-off';
 import NotFound from './pages/not-found';
+import ScanId from './pages/scanId';
 
 const App = () => {
   return (
@@ -41,6 +42,10 @@ const App = () => {
         <Route
           path='/main-screen-off'
           element={<MainScreenOFF />}
+        />
+        <Route
+          path='/scanId'
+          element={<ScanId />} // Add new route for scanId
         />
         <Route
           path='*'

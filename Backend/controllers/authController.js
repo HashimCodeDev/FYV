@@ -55,3 +55,17 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+exports.scanId = async (req, res) => {
+  const { idData } = req.body;
+
+  try {
+    const userRef = db.collection('users').doc();
+    await userRef.set({ idData });
+
+    res.status(201).json({ message: 'ID data saved successfully' });
+  } catch (error) {
+    console.error('Error saving ID data:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
