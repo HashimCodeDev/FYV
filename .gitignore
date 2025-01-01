@@ -6,7 +6,8 @@
 /build/
 
 # Environment variables file
-/.env
+/Backend/.env
+.env
 
 # macOS specific files
 /.DS_Store
