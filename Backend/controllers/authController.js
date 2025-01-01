@@ -8,6 +8,7 @@ exports.register = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed password:', hashedPassword);
     const userRef = db.collection('users').doc();
     await userRef.set({ email, password: hashedPassword });
 
@@ -26,13 +27,18 @@ exports.login = async (req, res) => {
       .where('email', '==', email)
       .get();
     if (userSnapshot.empty) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      console.log('No matching documents.');
+      return res
+        .status(400)
+        .json({ error: 'Invalid credentials: email not found' });
     }
 
     const user = userSnapshot.docs[0].data();
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res
+        .status(400)
+        .json({ error: 'Invalid credentials: incorrect password' });
     }
 
     const token = jwt.sign(
@@ -45,6 +51,7 @@ exports.login = async (req, res) => {
 
     res.json({ token });
   } catch (error) {
+    console.error('Error during login:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^7.1.0",
+    "axios": "^1.7.9",
+    "firebase": "^11.1.0",
     "next": "^15.1.3",
     "peerjs": "^1.5.4",
     "react": "^18.2.0",

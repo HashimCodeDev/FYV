@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Helmet } from 'react-helmet';
+import { app, analytics } from '../firebase'; // Import Firebase
 
 import '../styles/chatroom.css';
 

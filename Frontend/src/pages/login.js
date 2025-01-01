@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/login.css';
 
 const Login = () => {
@@ -9,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Validate fields
@@ -18,10 +19,19 @@ const Login = () => {
       return;
     }
 
-    // Clear error on successful validation
-    setError('');
-    // Redirect to the main screen
-    window.location.href = '/main-screen-off';
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/auth/login',
+        { email, password }
+      );
+      console.log(response.data);
+      // Clear error on successful validation
+      setError('');
+      // Redirect to the main screen
+      window.location.href = '/main-screen-off';
+    } catch (error) {
+      setError('Invalid email or password.');
+    }
   };
 
   return (
