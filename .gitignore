@@ -26,3 +26,6 @@ yarn-error.log*
 # System files (Windows)
 Thumbs.db
 ehthumbs.db
+
+#Json
+serviceAccountKey.json
