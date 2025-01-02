@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import io from 'socket.io-client';
 import '../styles/login.css';
 
 const Login = () => {
@@ -9,6 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,20 +24,40 @@ const Login = () => {
     try {
       const response = await axios.post(
         'http://localhost:5000/api/auth/login',
-        { email, password }
+        { email, password },
+        { headers: { 'Content-Type': 'application/json' } }
       );
       console.log(response.data);
       // Clear error on successful validation
       setError('');
+
+      // Connect to WebSocket server
+      const socket = io('http://localhost:5000', {
+        withCredentials: true,
+      });
+
+      socket.on('connect', () => {
+        console.log('Connected to server:', socket.id);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server:', socket.id);
+      });
+
       // Redirect to the main screen
-      window.location.href = '/lobby';
+      navigate('/lobby');
     } catch (error) {
-      setError('Invalid email or password.');
+      console.error('Login error:', error);
+      if (error.response && error.response.status === 400) {
+        setError('Invalid email or password.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
   const handleCollegeIdSignIn = () => {
-    window.location.href = '/scanid';
+    navigate('/scanid');
   };
 
   return (

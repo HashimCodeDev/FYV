@@ -2,19 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; // Import createRoot
 import {
   BrowserRouter as Router,
-  Routes, // Use Routes instead of Switch
+  Routes,
   Route,
   Navigate, // Use Navigate instead of Redirect
 } from 'react-router-dom';
 
-import './styles/global.css'; // Corrected import path
-import Chatroom from './pages/chatroom';
-import Login from './pages/login';
-import Homepage from './pages/homepage';
-import Profilesetting from './pages/profilesetting';
-import Lobby from './pages/lobby'; // Updated import
-import NotFound from './pages/not-found';
-import ScanId from './pages/scanId';
+import './styles/global.css'; // Import global styles
+import Chatroom from './pages/chatroom'; // Import Chatroom
+import Login from './pages/login'; // Import Login
+import Homepage from './pages/homepage'; // Import Homepage
+import Profilesetting from './pages/profilesetting'; // Import Profilesetting
+import Lobby from './pages/lobby'; // Import Lobby
+import NotFound from './pages/not-found'; // Import NotFound
+import ScanId from './pages/scanId'; // Import ScanId
 
 const App = () => {
   return (
