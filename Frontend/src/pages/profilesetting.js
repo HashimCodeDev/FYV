@@ -1,10 +1,12 @@
 import React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
 import '../styles/profilesetting.css';
 
 const Profilesetting = (props) => {
+  const navigate = useNavigate();
+
   return (
     <div className='profilesetting-container'>
       <Helmet>
@@ -327,6 +329,7 @@ const Profilesetting = (props) => {
         <img
           src='/external/arrowback3484-dtmm.svg'
           alt='arrowback3484'
+          onClick={() => navigate('/lobby')}
           className='profilesetting-arrowback'
         />
       </div>
