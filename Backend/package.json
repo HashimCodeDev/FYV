@@ -7,15 +7,18 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^7.11.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "firebase": "^11.1.0",
-    "firebase-admin": "^11.0.1",
+    "firebase-admin": "^13.0.2",
+    "google-gax": "^4.4.1",
     "jsonwebtoken": "^9.0.2",
     "peer": "^0.6.1",
+    "protobufjs": "^7.4.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
