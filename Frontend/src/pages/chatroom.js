@@ -167,7 +167,7 @@ const Chatroom = () => {
                 </div>
                 <div className='chatroom-leave-room'>
                   <Link
-                    to='/main-screen-off'
+                    to='/lobby'
                     className='chatroom-leave-room-link'>
                     <div className='chatroom-leave-room-button'>
                       <img

@@ -28,7 +28,7 @@ const Login = () => {
       // Clear error on successful validation
       setError('');
       // Redirect to the main screen
-      window.location.href = '/main-screen-off';
+      window.location.href = '/lobby';
     } catch (error) {
       setError('Invalid email or password.');
     }

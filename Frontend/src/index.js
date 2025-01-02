@@ -12,7 +12,7 @@ import Chatroom from './pages/chatroom';
 import Login from './pages/login';
 import Homepage from './pages/homepage';
 import Profilesetting from './pages/profilesetting';
-import MainScreenOFF from './pages/main-screen-off';
+import Lobby from './pages/lobby'; // Updated import
 import NotFound from './pages/not-found';
 import ScanId from './pages/scanId';
 
@@ -40,8 +40,8 @@ const App = () => {
           element={<Profilesetting />}
         />
         <Route
-          path='/main-screen-off'
-          element={<MainScreenOFF />}
+          path='/lobby'
+          element={<Lobby />} // Updated route
         />
         <Route
           path='/scanId'

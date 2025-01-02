@@ -1,4 +1,4 @@
-.main-screen-off-container {
+.lobby-container {
   width: 100%;
   display: flex;
   overflow: auto;
@@ -7,7 +7,7 @@
   flex-direction: column;
 }
  
-.main-screen-off-main-screen-off {
+.lobby-main-screen-off {
   width: 100%;
   height: auto;
   display: flex;
@@ -19,7 +19,7 @@
   background-color: rgba(255, 255, 255, 1);
 }
  
-.main-screen-off-sidebar {
+.lobby-sidebar {
   gap: 20px;
   height: 1024px;
   display: flex;
@@ -31,7 +31,7 @@
   background-color: rgba(255, 255, 255, 1);
 }
  
-.main-screen-off-header1 {
+.lobby-header1 {
   gap: 10px;
   display: flex;
   padding: 20px 25px;
@@ -40,12 +40,12 @@
   flex-direction: column;
 }
  
-.main-screen-off-vibeno-bmg1 {
+.lobby-vibeno-bmg1 {
   width: 90px;
   height: 101px;
 }
  
-.main-screen-off-text1 {
+.lobby-text1 {
   color: rgba(15, 88, 100, 1);
   width: 100px;
   height: auto;
@@ -59,7 +59,7 @@
   text-decoration: none;
 }
  
-.main-screen-off-settings1 {
+.lobby-settings1 {
   gap: 10px;
   width: 300px;
   display: flex;
@@ -69,7 +69,7 @@
   flex-direction: column;
 }
  
-.main-screen-off-menu-item {
+.lobby-menu-item {
   gap: 10px;
   display: flex;
   padding: 15px 0 20px 25px;
@@ -78,12 +78,12 @@
   flex-shrink: 0;
 }
  
-.main-screen-off-settings2 {
+.lobby-settings2 {
   width: 24px;
   height: 24px;
 }
  
-.main-screen-off-text2 {
+.lobby-text2 {
   color: rgba(50, 70, 78, 1);
   height: auto;
   text-align: left;
@@ -91,7 +91,7 @@
   text-decoration: none;
 }
  
-.main-screen-off-main {
+.lobby-main {
   display: flex;
   z-index: 1;
   flex-grow: 1;
@@ -100,7 +100,7 @@
   flex-direction: column;
 }
  
-.main-screen-off-header2 {
+.lobby-header2 {
   gap: 10px;
   display: flex;
   padding: 20px 30px;
@@ -112,14 +112,14 @@
   border-width: 0 0 1px;
 }
  
-.main-screen-off-left {
+.lobby-left {
   gap: 10px;
   display: flex;
   flex-grow: 1;
   align-items: flex-end;
 }
  
-.main-screen-off-text3 {
+.lobby-text3 {
   color: rgba(0, 122, 255, 1);
   height: auto;
   font-size: 28px;
@@ -132,7 +132,7 @@
   text-decoration: none;
 }
  
-.main-screen-off-duration {
+.lobby-duration {
   gap: 10px;
   display: flex;
   opacity: 0.60;
@@ -140,20 +140,20 @@
   align-items: flex-end;
 }
  
-.main-screen-off-right {
+.lobby-right {
   gap: 10px;
   display: flex;
   align-items: center;
 }
  
-.main-screen-off-content {
+.lobby-content {
   display: flex;
   flex-grow: 1;
   align-self: stretch;
   align-items: flex-start;
 }
  
-.main-screen-off-video-stream {
+.lobby-video-stream {
   gap: 20px;
   display: flex;
   padding: 30px;
@@ -166,7 +166,7 @@
   background-color: rgba(255, 255, 255, 1);
 }
  
-.main-screen-off-frame28991 {
+.lobby-frame28991 {
   width: 1004px;
   height: 268px;
   display: flex;
@@ -176,7 +176,7 @@
   flex-shrink: 0;
 }
  
-.main-screen-off-frame28992 {
+.lobby-frame28992 {
   gap: 10px;
   top: 74px;
   left: 68px;
@@ -188,7 +188,7 @@
   justify-content: center;
 }
  
-.main-screen-off-text4 {
+.lobby-text4 {
   color: rgba(0, 0, 0, 1);
   height: auto;
   font-size: 36px;
@@ -201,11 +201,11 @@
   text-decoration: none;
 }
  
-.main-screen-off-navlink1 {
+.lobby-navlink1 {
   display: contents;
 }
  
-.main-screen-off-message {
+.lobby-message {
   gap: 10px;
   width: 397px;
   height: 94px;
@@ -221,7 +221,7 @@
   background-color: rgba(0, 122, 255, 1);
 }
  
-.main-screen-off-text5 {
+.lobby-text5 {
   color: rgba(255, 255, 255, 1);
   height: auto;
   flex-grow: 1;
@@ -235,7 +235,7 @@
   text-decoration: none;
 }
  
-.main-screen-off-controls {
+.lobby-controls {
   gap: 20px;
   width: 802px;
   display: flex;
@@ -246,14 +246,14 @@
   justify-content: center;
 }
  
-.main-screen-off-middle {
+.lobby-middle {
   gap: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
  
-.main-screen-off-wrapper {
+.lobby-wrapper {
   gap: 10px;
   display: flex;
   padding: 0 0 0 30px;
@@ -263,7 +263,7 @@
   justify-content: center;
 }
  
-.main-screen-off-frame28993 {
+.lobby-frame28993 {
   gap: 10px;
   width: 117px;
   height: 110px;
@@ -273,11 +273,11 @@
   flex-shrink: 0;
 }
  
-.main-screen-off-navlink2 {
+.lobby-navlink2 {
   display: contents;
 }
  
-.main-screen-off-image2 {
+.lobby-image2 {
   width: 103px;
   height: 110px;
   text-decoration: none;
