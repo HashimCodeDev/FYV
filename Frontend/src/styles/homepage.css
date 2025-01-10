@@ -192,6 +192,15 @@
   align-items: center;
   gap:50px;
   font-family: var(--font-family);
+}
 
+.languages img{
+  height: 50px;
+  width: 50px;
+  transition: all 0.3s ease;
+}
+
+.languages img:hover{
+  transform: scale(1.1);
 }
 
