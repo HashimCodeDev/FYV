@@ -69,3 +69,29 @@ exports.scanId = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+exports.logout = (req, res) => {
+  res.json({ message: 'Logout successful' });
+};
+
+exports.disconnect = (req, res) => {
+  res.json({ message: 'Disconnect successful' });
+};
+
+exports.verify = (req, res) => {
+  const token = req.headers.authorization.split(' ')[1];
+  console.log('Token:', token);
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, config.JWT_SECRET);
+    console.log('Decoded:', decoded);
+  } catch (error) {
+    console.error('Verification error:', error);
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  res.json({ message: 'Verification successful' });
+};

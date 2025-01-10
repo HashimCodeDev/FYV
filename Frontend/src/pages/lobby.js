@@ -10,16 +10,43 @@ const MainScreenOFF = (props) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
+  const verifyToken = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/verify', {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Token verification failed');
+      }
+    } catch (error) {
+      console.error('Error verifying token:', error);
+      navigate('/login');
+    }
+  };
+
+  React.useEffect(() => {
+    if (token) {
+      verifyToken();
+    } else {
+      navigate('/login');
+    }
+  }, [token, navigate]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     navigate('/Chatroom');
   };
 
-  const socket = io('http://localhost:5000', { withCredentials: true });
-
   const handleSignOut = async (event) => {
     event.preventDefault();
-    socket.emit('Disconnect');
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
