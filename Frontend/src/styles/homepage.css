@@ -1,79 +1,135 @@
+:root{
+  --black-40: rgba(0, 0, 0, .4);
+  --black-60: rgba(0, 0, 0, .6);
+  --black-80: rgba(0, 0, 0, .8);
+  --black: #000;
+  --darker-gray: #484848;
+  --dark-gray: #626262;
+  --pink: #ffebe4;
+  --blue: #e4f9ff;
+  --green: #e4ffe4;
+  --gray: #e7e7e7;
+  --gray-100: #cdcdd3;
+  --gray-200: #f9f9fa;
+  --g0: #1c2226;
+  --g1: #4f5d69;
+  --g4: #bcc9d2;
+  --g5: #e0e6eb;
+  --g6: #ecf0f4;
+  --g7: #f8fafd;
+  --light-gray: #f2f2f2;
+  --lighter-gray: #f9f9f9;
+  --super-light-gray: #fbfbfb;
+  --white-80: hsla(0, 0%, 100%, .8);
+  --white: #fff;
+  --accent: #1e5af6;
+  --code-family: "IBM Plex Mono", monospace;
+  --font-family: "DM Sans", sans-serif;
+}
+
+.logo-container{
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 100px; /* Set width */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Remove space below image */
+  margin: 0 auto; /* Center the image */
+}
+
+
 .homepage-container {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  flex-direction: column; /* Ensure vertical stacking of elements if needed */
+  height: 400vh;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrollbar */
+  overflow: scroll;
+  background-color: white;
 }
 
-.homepage-header {
+.scrollable {
+  width: 300px;
+  height: 150px;
+  overflow: scroll; /* Adds a scrollbar when content overflows */
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.header {
+  display: flex; /* Row layout */
+  flex-direction: row; /* Optional, as `row` is the default for `display: flex` */
+  align-items: center; /* Vertically center items in the row */
+  justify-content: space-between; /* Space out the items evenly */
+  width: 100%;
+  height: 10vh;
+  padding: 50px 50px; 
+  background-color: white; 
+  z-index: 1;
+  font-family: var(--font-family);
+  letter-spacing: 0.2em;
+}
+
+.navigation-bar{
   display: flex;
+  position: relative;
+  left: 5%;
+  width: 60vb;
   justify-content: space-between;
-  align-items: center;
-  padding: 1rem; /* Use relative units */
-  background-color: #f0f0f0; /* Example background color */
+  align-items: stretch;
+  cursor: pointer;
+  border-radius: 50%;
 }
 
-.homepage-logo {
-  height: 3rem; /* Use relative units */
+.login,.about,.contact,.star-github{
+  padding: 20px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+.login:hover, .about:hover, .contact:hover,.github:hover{
+  background-color: var(--g5);
 }
 
-.homepage-nav {
+.hero{
   display: flex;
-  align-items: center;
+  position: relative;
+  top: 5%;
+  align-self: center;
 }
 
-.homepage-login-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: black;
+.main{
+  justify-self: center;
+  font-size: 90px;
+  padding: 0px 20px;
+  letter-spacing: -0.045em;
+  -webkit-text-stroke: 2.5px;
+  transition: all 0.3s ease;
 }
-.homepage-login-icon{
-    height: 1.5rem;
-    margin-right: 0.5rem;
+
+.main:hover{
+  transform: scale(1.2);
 }
-.homepage-main {
-  flex-grow: 1; /* Allow main content to take up available space */
+
+.sub{
   display: flex;
   flex-direction: column;
+  color: var(--g4);
+  max-width: 1140px;
+  transition: all 0.3s ease;
 }
 
-.homepage-hero {
-  position: relative; /* Needed for overlay positioning */
-  width: 100%;
-  overflow: hidden; /* Hide overflowing image */
+.sub:hover{
+  transform: scale(1.2);
 }
 
-.homepage-hero-image {
-  width: 100%;
-  height: auto;
-  display: block; /* Prevents a small gap below the image */
-  object-fit: cover; /* Maintain aspect ratio and cover container */
-}
 
-.homepage-hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.github {
+  position: relative;
+  border-radius: 10px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-  color: white;
-  text-align: center;
-}
-
-.homepage-hero-text {
-  font-size: 3rem;
-  font-weight: bold;
-  padding: 1rem;
-}
-
-@media (max-width: 768px) {
-    .homepage-hero-text {
-        font-size: 2rem;
-    }
+  align-items: center; /* Center content within the box */
+  justify-content: center; /* Center content horizontally */
+  cursor: pointer;
+  transition: 0.3s;
 }

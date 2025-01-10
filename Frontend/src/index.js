@@ -30,7 +30,7 @@ const App = () => {
         {/* Use element prop */}
         <Route
           path='/login'
-          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+          element={<Login />}
         />
         <Route
           path='/'

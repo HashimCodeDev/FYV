@@ -5,7 +5,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import '../styles/login.css';
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,7 +32,6 @@ const Login = ({ setIsAuthenticated }) => {
       setError('');
 
       localStorage.setItem('token', response.data.JwtToken);
-      setIsAuthenticated(true);
 
       // Connect to WebSocket server
       const socket = io('http://localhost:5000', {
