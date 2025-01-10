@@ -126,6 +126,10 @@ const Homepage = () => {
           className='express'
           src='/external/express-js.svg'
         />
+        <img
+          className='firestore'
+          src='/external/firestore.svg'
+        />
       </div>
     );
   };
