@@ -1,59 +1,51 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import '../styles/homepage.css';
 
 const Homepage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className='homepage-container'>
-      <Helmet>
-        <title>FYV</title>
-      </Helmet>
-      <header className='homepage-header'>
-        {' '}
-        {/* Use semantic header element */}
-        <img
-          src='/external/fyv_nobmg.png'
-          alt='FYV Logo'
-          className='homepage-logo'
-        />
-        <nav className='homepage-nav'>
-          {' '}
-          {/* Use semantic nav element */}
-          <Link
-            to='/login'
-            className='homepage-login-link'>
-            <img
-              src='/external/login1617-lpx6m.svg'
-              alt='Login Icon'
-              className='homepage-login-icon'
-            />
-            <span className='homepage-login-text'>LOGIN</span>
-          </Link>
-        </nav>
-      </header>
-      <main className='homepage-main'>
-        {' '}
-        {/* Use semantic main element */}
-        <div className='homepage-hero'>
-          <img
-            src='/external/image43412-r2er-1000h.png'
-            alt='Hero Image'
-            className='homepage-hero-image'
+      <div className='header'>
+        <div className='logo-container'>
+          <LazyLoadImage
+            className='logo'
+            src='/external/logo.png'
+            alt='logo'
+            effect='blur'
           />
-          <div className='homepage-hero-overlay'>
-            {' '}
-            {/* Overlay for text */}
-            <h1 className='homepage-hero-text'>
-              {' '}
-              {/* Use a heading element */}
-              "Socializing is the art of finding the beauty in connections—
-              <br />
-              where strangers become friends and conversations become memories."
-            </h1>
-          </div>
+          <a className='logo-name'>FYV</a>
         </div>
-      </main>
+        <div className='navigation-bar'>
+          <a className='about'> About </a>
+          <a
+            className='login'
+            onClick={() => navigate('/login')}>
+            Login
+          </a>
+          <a className='contact'> Contact Us </a>
+        </div>
+
+        <div className='github'>
+          <a
+            className='star-github'
+            href='https://github.com/HashimCodeDev/FYV'
+            target='_blank'
+            rel='noopener noreferrer'>
+            Star ⭐ Our Project
+          </a>
+        </div>
+      </div>
+      <div className='hero'>
+        <div className='heading'>
+          <h1 className='main'> Link Up </h1>
+          <h1 className='sub'>Connecting you, one chat at a time</h1>
+        </div>
+      </div>
     </div>
   );
 };
