@@ -41,15 +41,15 @@ exports.login = async (req, res) => {
         .json({ error: 'Invalid credentials: incorrect password' });
     }
 
-    const token = jwt.sign(
-      { userId: userSnapshot.docs[0].id },
-      config.JWT_SECRET,
-      {
-        expiresIn: '1h',
-      }
-    );
+    const payload = {
+      userId: userSnapshot.docs[0].id,
+      userName: user.email,
+      role: 'user',
+    };
 
-    res.json({ token });
+    const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ message: 'Login Succesful ', JwtToken: token });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'Server error' });

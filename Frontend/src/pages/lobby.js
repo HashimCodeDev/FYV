@@ -1,81 +1,99 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Helmet } from 'react-helmet';
+import io from 'socket.io-client';
 
 import '../styles/lobby.css';
 
 const MainScreenOFF = (props) => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    navigate('/Chatroom');
+  };
+
+  const socket = io('http://localhost:5000', { withCredentials: true });
+
+  const handleSignOut = async (event) => {
+    event.preventDefault();
+    socket.emit('Disconnect');
+    navigate('/login');
+  };
+
   return (
-    <div className='lobby-container'>
+    <div className='lobbyContainer'>
       <Helmet>
         <title>FYV</title>
       </Helmet>
-      <div className='lobby-main-screen-off'>
-        <div className='lobby-sidebar'>
-          <div className='lobby-header1'>
+      <div className='lobbyMainScreenOff'>
+        <div className='lobbySidebar'>
+          <div className='lobbyHeader'>
             <img
               src='/external/fyv_nobmg.png'
               alt='vibenoBmg13410'
-              className='lobby-vibeno-bmg1'
+              className='lobbyLogo'
             />
-            <span className='lobby-text1'>FYV</span>
+            <span className='lobbyTitle'>FYV</span>
           </div>
-          <div className='lobby-settings1'>
-            <div className='lobby-menu-item'>
+          <div className='lobbySettings'>
+            <div className='lobbyMenuItem'>
               <img
                 src='/external/settings3410-plui.svg'
                 alt='settings3410'
-                className='lobby-settings2'
+                className='lobbySettingsIcon'
               />
-              <Link
-                to='/'
-                className='lobby-text2 Title'>
+              <button
+                to='/login'
+                onClick={handleSignOut}
+                className='lobbySignOutButton'>
                 Sign Out
-              </Link>
+              </button>
             </div>
           </div>
         </div>
-        <div className='lobby-main'>
-          <div className='lobby-header2'>
-            <div className='lobby-left'>
-              <span className='lobby-text3'>Lobby</span>
-              <div className='lobby-duration'></div>
+        <div className='lobbyMain'>
+          <div className='lobbyHeaderSecondary'>
+            <div className='lobbyLeft'>
+              <span className='lobbyLobbyText'>Lobby</span>
+              <div className='lobbyDuration'></div>
             </div>
-            <div className='lobby-right'></div>
+            <div className='lobbyRight'></div>
           </div>
-          <div className='lobby-content'>
-            <div className='lobby-video-stream'>
-              <div className='lobby-frame28991'>
-                <div className='lobby-frame28992'>
-                  <span className='lobby-text4'>
+          <div className='lobbyContent'>
+            <div className='lobbyVideoStream'>
+              <div className='lobbyFrame'>
+                <div className='lobbyFrameInner'>
+                  <span className='lobbyNoVideoText'>
                     &quot;No active video calls at the moment.&quot;&quot;Ready
                     to connect? Click below to start fresh!&quot;
                   </span>
                 </div>
               </div>
-              <Link
-                to='/Chatroom'
-                className='lobby-navlink1'>
-                <div className='lobby-message'>
-                  <span className='lobby-text5'>JOIN A NEW ROOM</span>
+              <button
+                onClick={handleSubmit}
+                className='lobbyJoinButton'>
+                <div className='lobbyMessage'>
+                  <span className='lobbyJoinText'>JOIN A NEW ROOM</span>
                 </div>
-              </Link>
-              <div className='lobby-controls'>
-                <div className='lobby-middle'></div>
-                <div className='lobby-wrapper'></div>
+              </button>
+              <div className='lobbyControls'>
+                <div className='lobbyMiddle'></div>
+                <div className='lobbyWrapper'></div>
               </div>
             </div>
           </div>
         </div>
-        <div className='lobby-frame28993'>
+        <div className='lobbyProfileLink'>
           <Link
             to='/profilesetting'
-            className='lobby-navlink2'>
+            className='lobbyProfileImage'>
             <img
               src='/external/image26712-pg7j-200w.png'
               alt='image26712'
-              className='lobby-image2'
+              className='lobbyProfileImage'
             />
           </Link>
         </div>

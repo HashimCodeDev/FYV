@@ -17,6 +17,7 @@ import NotFound from './pages/not-found'; // Import NotFound
 import ScanId from './pages/scanId'; // Import ScanId
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   return (
     <Router>
       <Routes>
@@ -29,7 +30,7 @@ const App = () => {
         {/* Use element prop */}
         <Route
           path='/login'
-          element={<Login />}
+          element={<Login setIsAuthenticated={setIsAuthenticated} />}
         />
         <Route
           path='/'

@@ -1,4 +1,4 @@
-.lobby-container {
+.lobbyContainer {
   width: 100%;
   display: flex;
   overflow: auto;
@@ -6,20 +6,20 @@
   align-items: center;
   flex-direction: column;
 }
- 
-.lobby-main-screen-off {
+
+.lobbyMainScreenOff {
   width: 100%;
   height: auto;
   display: flex;
   overflow: hidden;
-  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.10000000149011612) ;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 1);
 }
- 
-.lobby-sidebar {
+
+.lobbySidebar {
   gap: 20px;
   height: 1024px;
   display: flex;
@@ -30,8 +30,8 @@
   flex-direction: column;
   background-color: rgba(255, 255, 255, 1);
 }
- 
-.lobby-header1 {
+
+.lobbyHeader {
   gap: 10px;
   display: flex;
   padding: 20px 25px;
@@ -39,13 +39,13 @@
   align-items: flex-start;
   flex-direction: column;
 }
- 
-.lobby-vibeno-bmg1 {
+
+.lobbyLogo {
   width: 90px;
   height: 101px;
 }
- 
-.lobby-text1 {
+
+.lobbyTitle {
   color: rgba(15, 88, 100, 1);
   width: 100px;
   height: auto;
@@ -58,8 +58,8 @@
   font-stretch: normal;
   text-decoration: none;
 }
- 
-.lobby-settings1 {
+
+.lobbySettings {
   gap: 10px;
   width: 300px;
   display: flex;
@@ -67,9 +67,10 @@
   align-items: flex-start;
   flex-shrink: 0;
   flex-direction: column;
+  cursor: pointer;
 }
- 
-.lobby-menu-item {
+
+.lobbyMenuItem {
   gap: 10px;
   display: flex;
   padding: 15px 0 20px 25px;
@@ -77,21 +78,22 @@
   align-items: flex-start;
   flex-shrink: 0;
 }
- 
-.lobby-settings2 {
+
+.lobbySettingsIcon {
   width: 24px;
   height: 24px;
 }
- 
-.lobby-text2 {
+
+.lobbySignOutButton {
   color: rgba(50, 70, 78, 1);
   height: auto;
   text-align: left;
   line-height: normal;
   text-decoration: none;
+  cursor: pointer;
 }
- 
-.lobby-main {
+
+.lobbyMain {
   display: flex;
   z-index: 1;
   flex-grow: 1;
@@ -99,8 +101,8 @@
   align-items: flex-start;
   flex-direction: column;
 }
- 
-.lobby-header2 {
+
+.lobbyHeaderSecondary {
   gap: 10px;
   display: flex;
   padding: 20px 30px;
@@ -111,15 +113,15 @@
   border-style: solid;
   border-width: 0 0 1px;
 }
- 
-.lobby-left {
+
+.lobbyLeft {
   gap: 10px;
   display: flex;
   flex-grow: 1;
   align-items: flex-end;
 }
- 
-.lobby-text3 {
+
+.lobbyLobbyText {
   color: rgba(0, 122, 255, 1);
   height: auto;
   font-size: 28px;
@@ -131,29 +133,29 @@
   font-stretch: normal;
   text-decoration: none;
 }
- 
-.lobby-duration {
+
+.lobbyDuration {
   gap: 10px;
   display: flex;
   opacity: 0.60;
   padding: 0 0 5px;
   align-items: flex-end;
 }
- 
-.lobby-right {
+
+.lobbyRight {
   gap: 10px;
   display: flex;
   align-items: center;
 }
- 
-.lobby-content {
+
+.lobbyContent {
   display: flex;
   flex-grow: 1;
   align-self: stretch;
   align-items: flex-start;
 }
- 
-.lobby-video-stream {
+
+.lobbyVideoStream {
   gap: 20px;
   display: flex;
   padding: 30px;
@@ -165,8 +167,8 @@
   flex-direction: column;
   background-color: rgba(255, 255, 255, 1);
 }
- 
-.lobby-frame28991 {
+
+.lobbyFrame {
   width: 1004px;
   height: 268px;
   display: flex;
@@ -175,8 +177,8 @@
   align-items: flex-start;
   flex-shrink: 0;
 }
- 
-.lobby-frame28992 {
+
+.lobbyFrameInner {
   gap: 10px;
   top: 74px;
   left: 68px;
@@ -187,8 +189,8 @@
   align-items: center;
   justify-content: center;
 }
- 
-.lobby-text4 {
+
+.lobbyNoVideoText {
   color: rgba(0, 0, 0, 1);
   height: auto;
   font-size: 36px;
@@ -200,12 +202,13 @@
   font-stretch: normal;
   text-decoration: none;
 }
- 
-.lobby-navlink1 {
+
+.lobbyJoinButton {
   display: contents;
+  cursor: pointer;
 }
- 
-.lobby-message {
+
+.lobbyMessage {
   gap: 10px;
   width: 397px;
   height: 94px;
@@ -220,8 +223,8 @@
   text-decoration: none;
   background-color: rgba(0, 122, 255, 1);
 }
- 
-.lobby-text5 {
+
+.lobbyJoinText {
   color: rgba(255, 255, 255, 1);
   height: auto;
   flex-grow: 1;
@@ -234,8 +237,8 @@
   font-stretch: normal;
   text-decoration: none;
 }
- 
-.lobby-controls {
+
+.lobbyControls {
   gap: 20px;
   width: 802px;
   display: flex;
@@ -245,15 +248,15 @@
   flex-shrink: 0;
   justify-content: center;
 }
- 
-.lobby-middle {
+
+.lobbyMiddle {
   gap: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
- 
-.lobby-wrapper {
+
+.lobbyWrapper {
   gap: 10px;
   display: flex;
   padding: 0 0 0 30px;
@@ -262,8 +265,8 @@
   flex-direction: column;
   justify-content: center;
 }
- 
-.lobby-frame28993 {
+
+.lobbyProfileLink {
   gap: 10px;
   width: 117px;
   height: 110px;
@@ -272,12 +275,8 @@
   align-items: center;
   flex-shrink: 0;
 }
- 
-.lobby-navlink2 {
-  display: contents;
-}
- 
-.lobby-image2 {
+
+.lobbyProfileImage {
   width: 103px;
   height: 110px;
   text-decoration: none;

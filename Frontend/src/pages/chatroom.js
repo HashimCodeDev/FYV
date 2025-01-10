@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Webcam from 'react-webcam';
 import { Helmet } from 'react-helmet';
+import io from 'socket.io-client';
 import { app, analytics } from '../firebase'; // Import Firebase
 
 import '../styles/chatroom.css';
@@ -11,6 +12,10 @@ const Chatroom = () => {
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [micEnabled, setMicEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
+  const socket = io('http://localhost:5000', {
+    withCredentials: true,
+  });
 
   // Timer for chat duration
   useEffect(() => {
@@ -20,6 +25,26 @@ const Chatroom = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  // Handle incoming chat messages
+  useEffect(() => {
+    socket.on('chatMessage', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.off('chatMessage');
+    };
+  }, [socket]);
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      socket.emit('chatMessage', message);
+      setMessage('');
+    }
+  };
 
   // Format time as HH:MM:SS
   const formatTime = (seconds) => {

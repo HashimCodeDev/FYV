@@ -40,6 +40,12 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
+
+  // Handle incoming chat messages
+  socket.on('chatMessage', (message) => {
+    console.log('Received message:', message);
+    io.emit('chatMessage', message); // Broadcast message to all connected clients
+  });
 });
 
 const port = process.env.PORT || config.PORT;
