@@ -108,11 +108,14 @@
 }
 
 .main:hover{
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .sub{
   display: flex;
+  text-align: center;
+  width: 60vb;
+  font-size: 50px;
   flex-direction: column;
   color: var(--g4);
   max-width: 1140px;
@@ -120,7 +123,7 @@
 }
 
 .sub:hover{
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 
