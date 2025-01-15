@@ -102,8 +102,8 @@ exports.fetchAndConnectUsers = async (req, res) => {
   }
 };
 
-// Connect Users via WebRTC (Using WebSockets for signaling)
-exports.connectUsers = async (req, res) => {
+// Establish Video Chat Connection using PeerJS
+exports.establishVideoChat = async (req, res) => {
   const { peerId } = req.body;
 
   try {
@@ -117,16 +117,20 @@ exports.connectUsers = async (req, res) => {
     const sessionData = sessionDoc.data();
     const users = sessionData.users;
 
-    // Logic to connect users with the same peerId using WebRTC signaling via WebSockets
-    res.status(200).json({ message: 'Users connected', users, peerId });
+    // Instruct the clients to connect via PeerJS
+    users.forEach(user => {
+      console.log(`Instructing user to connect via PeerJS: ${user.userid}`);
+    });
+
+    res.status(200).json({ message: 'Video chat connection established using PeerJS', users, peerId });
   } catch (error) {
-    console.error('Error connecting users:', error);
-    res.status(500).json({ error: 'Error connecting users' });
+    console.error('Error establishing video chat connection using PeerJS:', error);
+    res.status(500).json({ error: 'Error establishing video chat connection using PeerJS' });
   }
 };
 
-// Disconnect Users
-exports.disconnectUsers = async (req, res) => {
+// Disconnect Users from Video Chat
+exports.disconnectVideoChat = async (req, res) => {
   const { peerId } = req.body;
 
   try {
@@ -150,10 +154,10 @@ exports.disconnectUsers = async (req, res) => {
     // Commit batch update
     await batch.commit();
 
-    res.status(200).json({ message: 'Users disconnected', peerId });
+    res.status(200).json({ message: 'Users disconnected from video chat', peerId });
   } catch (error) {
-    console.error('Error disconnecting users:', error);
-    res.status(500).json({ error: 'Error disconnecting users' });
+    console.error('Error disconnecting users from video chat:', error);
+    res.status(500).json({ error: 'Error disconnecting users from video chat' });
   }
 };
 
@@ -164,4 +168,3 @@ exports.getUserId = (req, res) => {
   }
   res.json({ message: 'User ID received', userId });
 };
-

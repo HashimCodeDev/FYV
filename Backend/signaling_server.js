@@ -1,20 +1,14 @@
-const WebSocket = require('ws');
+const { PeerServer } = require('peer');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const peerServer = PeerServer({ port: 9000, path: '/myapp' });
 
-wss.on('connection', ws => {
-  ws.on('message', message => {
-    // Broadcast the message to all connected clients except the sender
-    wss.clients.forEach(client => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
-  });
-
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
+peerServer.on('connection', (client) => {
+  console.log('Client connected:', client.id);
 });
 
-console.log('WebSocket signaling server running on ws://localhost:8080');
+peerServer.on('disconnect', (client) => {
+  console.log('Client disconnected:', client.id);
+});
+
+console.log('PeerServer running on http://localhost:9000/myapp');
+
