@@ -9,17 +9,20 @@ import '../styles/lobby.css';
 const MainScreenOFF = (props) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const server = 'https://fyv-production.up.railway.app/';
+  const server = 'https://fyv-production.up.railway.app';
 
   const verifyToken = async () => {
     try {
-      const response = await fetch('${server}/api/auth/verify', {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ token }),
-      });
+      const response = await fetch(
+        'https://fyv-production.up.railway.app/api/auth/verify',
+        {
+          method: 'POST',
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ token }),
+        }
+      );
 
       const data = await response.json();
 
