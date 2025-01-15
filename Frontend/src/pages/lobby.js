@@ -9,7 +9,6 @@ import '../styles/lobby.css';
 const MainScreenOFF = (props) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const server = 'https://fyv-production.up.railway.app';
 
   const verifyToken = async () => {
     try {
