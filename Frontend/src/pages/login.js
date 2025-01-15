@@ -23,7 +23,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        'fyv-production.up.railway.app/api/auth/login',
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -34,7 +34,7 @@ const Login = () => {
       localStorage.setItem('token', response.data.JwtToken);
 
       // Connect to WebSocket server
-      const socket = io('http://localhost:5000', {
+      const socket = io('fyv-production.up.railway.app', {
         withCredentials: true,
       });
 
