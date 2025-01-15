@@ -23,7 +23,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'fyv-production.up.railway.app/api/auth/login',
+        '/api/auth/login',
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
