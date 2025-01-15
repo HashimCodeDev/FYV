@@ -98,9 +98,9 @@ const Chatroom = () => {
 
   useEffect(() => {
     const peer = new Peer(undefined, {
-      host: 'localhost',
-      port: 5000,
-      path: '/peerjs',
+      host: '0.peerjs.com',
+      port: 443,
+      path: '/',
     });
 
     peer.on('open', (id) => {
