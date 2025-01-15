@@ -17,7 +17,9 @@ const Chatroom = () => {
   const remoteVideoRef = useRef();
   const peerInstance = useRef();
 
-  const socket = io('http://localhost:5000', {
+  const server = 'https://fyv-production.up.railway.app/';
+
+  const socket = io(server, {
     withCredentials: true,
   });
 
