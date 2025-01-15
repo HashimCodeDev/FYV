@@ -34,13 +34,13 @@ const MainScreenOFF = (props) => {
   //     }
   //   };
 
-  React.useEffect(() => {
-    if (token) {
-      verifyToken();
-    } else {
-      navigate('/login');
-    }
-  }, [token, navigate]);
+  // React.useEffect(() => {
+  //   if (token) {
+  //     verifyToken();
+  //   } else {
+  //     navigate('/login');
+  //   }
+  // }, [token, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,7 +49,7 @@ const MainScreenOFF = (props) => {
 
   const handleSignOut = async (event) => {
     event.preventDefault();
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
     navigate('/login');
   };
 
