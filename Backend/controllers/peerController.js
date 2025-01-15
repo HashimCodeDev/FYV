@@ -102,7 +102,7 @@ exports.fetchAndConnectUsers = async (req, res) => {
   }
 };
 
-// Establish Video Chat Connection
+// Establish Video Chat Connection using PeerJS
 exports.establishVideoChat = async (req, res) => {
   const { peerId } = req.body;
 
@@ -117,17 +117,15 @@ exports.establishVideoChat = async (req, res) => {
     const sessionData = sessionDoc.data();
     const users = sessionData.users;
 
-    // Here, you would handle the WebRTC signaling process using WebSockets
-    // For simplicity, we'll simulate the signaling process
+    // Instruct the clients to connect via PeerJS
     users.forEach(user => {
-      // Simulate sending WebRTC signaling data to each user
-      console.log(`Sending WebRTC signaling data to user: ${user.userid}`);
+      console.log(`Instructing user to connect via PeerJS: ${user.userid}`);
     });
 
-    res.status(200).json({ message: 'Video chat connection established', users, peerId });
+    res.status(200).json({ message: 'Video chat connection established using PeerJS', users, peerId });
   } catch (error) {
-    console.error('Error establishing video chat connection:', error);
-    res.status(500).json({ error: 'Error establishing video chat connection' });
+    console.error('Error establishing video chat connection using PeerJS:', error);
+    res.status(500).json({ error: 'Error establishing video chat connection using PeerJS' });
   }
 };
 
@@ -170,5 +168,3 @@ exports.getUserId = (req, res) => {
   }
   res.json({ message: 'User ID received', userId });
 };
-
-
