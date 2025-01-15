@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { PeerServer } = require('peer');
+// const { PeerServer } = require('peer'); // Remove this line
 
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -19,6 +19,6 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/peer', peerRoutes);
 
 // PeerJS server
-const peerServer = PeerServer({ port: 9000, path: '/peerjs' });
+// const peerServer = PeerServer({ port: 9000, path: '/peerjs' }); // Remove this line
 
 module.exports = app;
