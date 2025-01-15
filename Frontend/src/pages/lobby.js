@@ -9,10 +9,11 @@ import '../styles/lobby.css';
 const MainScreenOFF = (props) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const server = 'https://fyv-production.up.railway.app/';
 
   const verifyToken = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify', {
+      const response = await fetch('${server}/api/auth/verify', {
         method: 'POST',
         headers: {
           authorization: `Bearer ${token}`,
