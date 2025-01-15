@@ -7,32 +7,32 @@ import io from 'socket.io-client';
 import '../styles/lobby.css';
 
 const MainScreenOFF = (props) => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  //   const navigate = useNavigate();
+  //   const token = localStorage.getItem('token');
 
-  const verifyToken = async () => {
-    try {
-      const response = await fetch(
-        'https://fyv-production.up.railway.app/api/auth/verify',
-        {
-          method: 'POST',
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ token }),
-        }
-      );
+  //   const verifyToken = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         'https://fyv-production.up.railway.app/api/auth/verify',
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             authorization: `Bearer ${token}`,
+  //           },
+  //           body: JSON.stringify({ token }),
+  //         }
+  //       );
 
-      const data = await response.json();
+  //       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Token verification failed');
-      }
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      navigate('/login');
-    }
-  };
+  //       if (!response.ok) {
+  //         throw new Error(data.message || 'Token verification failed');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error verifying token:', error);
+  //       navigate('/login');
+  //     }
+  //   };
 
   React.useEffect(() => {
     if (token) {
