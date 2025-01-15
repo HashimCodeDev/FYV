@@ -59,7 +59,7 @@ const MainScreenOFF = (props) => {
         <div className='lobbySidebar'>
           <div className='lobbyHeader'>
             <img
-              src='/external/fyv_nobmg.png'
+              src='/external/logo.png'
               alt='vibenoBmg13410'
               className='lobbyLogo'
             />

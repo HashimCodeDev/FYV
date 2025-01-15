@@ -1,362 +1,70 @@
-.chatroom-container {
-  width: 100%;
+:root{
+  --black-40: rgba(0, 0, 0, .4);
+  --black-60: rgba(0, 0, 0, .6);
+  --black-80: rgba(0, 0, 0, .8);
+  --black: #000;
+  --darker-gray: #484848;
+  --dark-gray: #626262;
+  --pink: #ffebe4;
+  --blue: #e4f9ff;
+  --green: #e4ffe4;
+  --gray: #e7e7e7;
+  --gray-100: #cdcdd3;
+  --gray-200: #f9f9fa;
+  --g0: #1c2226;
+  --g1: #4f5d69;
+  --g4: #bcc9d2;
+  --g5: #e0e6eb;
+  --g6: #ecf0f4;
+  --g7: #f8fafd;
+  --light-gray: #f2f2f2;
+  --lighter-gray: #f9f9f9;
+  --super-light-gray: #fbfbfb;
+  --white-80: hsla(0, 0%, 100%, .8);
+  --white: #fff;
+  --accent: #1e5af6;
+  --code-family: "IBM Plex Mono", monospace;
+  --font-family: "DM Sans", sans-serif;
+}
+
+.chatroom-container{
   display: flex;
-  overflow: auto;
-  min-height: 100vh;
-  align-items: center;
-  flex-direction: column;
-  background-color: #f0f2f5; /* Added background color for better contrast */
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  justify-content: center;
 }
 
-.chatroom-main {
-  width: 100%;
+.chatroom-header{
   display: flex;
-  overflow: hidden;
-  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-  align-items: flex-start;
-  border-radius: 10px;
-  background-color: #fff;
-  max-width: 1200px; /* Added max-width for better layout on larger screens */
-  margin: 20px; /* Added margin for spacing */
-  flex-direction: row;
+  width: 100vw;
+  height: 12%;
 }
 
-.chatroom-header {
+.chatroom-logo{
+  position: relative;
   display: flex;
-  flex-direction: row;
-  gap: 10px;
-  padding:0px 20px;
-  align-self: stretch;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.chatroom-logo {
-  width: 90px;
-  height: 101px;
-}
-
-.chatroom-title {
-  color: rgb(15, 88, 100);
   width: 100px;
-  font-size: 40px;
-  text-align: center;
-  font-family: "Jolly Lodger";
-  font-weight: 400;
-}
-
-.chatroom-content {
-  display: flex;
-  flex-direction: column;
-  z-index: 2;
-  flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
-}
-
-.chatroom-header {
-  display: flex;
-  gap: 10px;
-  padding: 20px 30px;
-  align-self: stretch;
+  height: 100px;
+  left: 15px;
+  object-fit: contain;
   align-items: center;
-  border-bottom: 1px solid rgba(242, 242, 242, 1);
-  justify-content: space-between;
 }
 
-.chatroom-left {
+.chatroom-title{
   display: flex;
-  gap: 10px;
-  flex-grow: 1;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.chatroom-chatroom {
-  color: rgba(0, 122, 255, 1);
-  font-size: 28px;
-  font-family: Jost;
-  font-weight: 600;
-  line-height: 36px;
-}
-
-.chatroom-duration {
-  display: flex;
-  gap: 10px;
-  padding-bottom: 5px;
-  align-items: flex-end;
-  opacity: 0.6;
-}
-
-.chatroom-time {
-  color: rgba(0, 122, 255, 1);
-  line-height: 20px;
-  opacity: 0.6;
-}
-
-.chatroom-right {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-direction: row;
-  align-items: center;
-  align-self: flex-end;
-}
-
-.chatroom-more-options {
-  width: 24px;
-  height: 24px;
-  cursor: pointer; /* Added cursor pointer for better UX */
-}
-
-.chatroom-next-room {
-  display: flex;
-  gap: 10px;
-  height: 40px;
-  padding: 0 20px;
-  align-items: center;
-  border-radius: 10px;
-  justify-content: center;
-  background-color: rgba(0, 122, 255, 1);
-  cursor: pointer; /* Added cursor pointer for better UX */
-}
-
-.chatroom-next-room-text {
-  color: #fff;
-  line-height: 20px;
-}
-
-.chatroom-next-room-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.chatroom-main-content {
-  display: flex;
-  flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.chatroom-video-stream {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: 85vh;
-  padding: 15px;
-  overflow: hidden;
   position: relative;
-  align-self: stretch;
-  align-items: flex-start;
-  background-color: #fff;
-  flex-direction: column;
-}
-
-.chatroom-camera {
-  display: flex;
-  gap: 5px;
-  height: 100%;
-  padding: 20px;
-  z-index: 1;
-  overflow: hidden;
-  flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
-  border-radius: 10px;
-  background-color: #333;
-  justify-content: center; /* Centered content */
-}
-
-.chatroom-video-controls {
-  display: flex;
+  left: 35%;
   gap: 10px;
-  padding: 10px 20px;
   align-items: center;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.2);
 }
 
-.chatroom-controls {
+.chatroom-remote-screen{
   display: flex;
-  gap: 20px;
-  width: 100%; /* Adjusted width to 100% */
-  z-index: 3;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-}
-
-.chatroom-middle-controls {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-}
-
-.chatroom-video-toggle,
-.chatroom-mic-toggle {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  align-items: center;
-  border-radius: 30px;
-  justify-content: center;
-  background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(15, 15, 15, 0.15);
-  cursor: pointer;
-}
-
-.chatroom-video-icon,
-.chatroom-mic-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.chatroom-leave-room {
-  display: flex;
-  gap: 10px;
-  padding-left: 30px;
-  z-index: 1;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.chatroom-leave-room-link {
-  display: contents;
-}
-
-.chatroom-leave-room-button {
-  display: flex;
-  gap: 10px;
-  padding: 10px 20px;
-  align-items: center;
-  border-radius: 10px;
-  justify-content: center;
-  background-color: rgba(13, 125, 248, 0.8);
-  box-shadow: 0px 2px 4px rgba(15, 15, 15, 0.15);
-  text-decoration: none;
-  cursor: pointer; /* Added cursor pointer for better UX */
-}
-
-.chatroom-leave-room-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.chatroom-leave-room-text {
-  color: #fff;
-  line-height: 20px;
-}
-
-.chatroom-chat {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        height: 100%; /* Make chat take full height */
-        max-width: 350px; /* Reduced max-width to give more space to video content */
-        border-left: 1px solid rgba(231, 231, 231, 1); /* Changed border to left to sideline chat */
-        align-self: flex-end; /* Align chat to the right */
-        margin-top: 0; /* Remove top margin */
-        width: auto; /* Ensure chat does not fill the whole space horizontally */
-    }
-
-.chatroom-camera,
-.chatroom-webcam {
-  height: 100%; /* Make the video containers take full height */
-  width: 85vh; /* Make the video containers take full width */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 5vh; /* Set minimum height relative to viewport */
-  min-width: 5vw; /* Set minimum width relative to viewport */
-}
-
-.chatroom-camera {
-  background-color: #333; /* Ensure background color remains when video is off */
-  min-height: 5vh; /* Set minimum height relative to viewport */
-  min-width: 5vw; /* Set minimum width relative to viewport */
-}
-
-.chatroom-webcam {
-  background-color: #333; /* Ensure background color remains when video is off */
-  min-height: 5vh; /* Set minimum height relative to viewport */
-  min-width: 5vw; /* Set minimum width relative to viewport */
-}
-
-.chatroom-message-history {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 10px;
-  overflow-y: auto;
-}
-
-.chatroom-message-wrap {
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
-  border-radius: 10px;
-  margin-bottom: 5px;
-  max-width: 80%; /* Added max-width for better layout */
-}
-
-.user-message {
-  background-color: rgba(0, 122, 255, 1);
-  color: #fff;
-  align-self: flex-end; /* Align user messages to the right */
-}
-
-.received-message {
-  background-color: rgba(242, 242, 242, 1);
-  color: rgba(18, 18, 18, 1);
-  align-self: flex-start; /* Align received messages to the left */
-}
-
-.chatroom-new-message {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    width: 100%;
-    border-radius: 6px;
-    background-color: rgba(242, 242, 242, 1);
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Added subtle shadow for depth */
-}
-
-.chatroom-message-input {
-    color: rgba(137, 137, 137, 1);
-    line-height: 20px;
-    flex-grow: 1;
-    padding: 10px; /* Added padding for better spacing */
-    border: none; /* Removed border for cleaner look */
-    border-radius: 4px; /* Rounded corners */
-    background-color: #fff; /* White background for input */
-    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
-    outline: none; /* Removed outline for cleaner look */
-}
-
-
-.chatroom-send-icon {
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  margin-left: 10px;
-  transition: transform 0.2s ease-in-out; /* Smooth transition */
-}
-
-.chatroom-send-icon:hover {
-  transform: scale(1.2); /* Slightly enlarge on hover */
-}
-
-.chatroom-placeholder {
-  color: rgba(18, 18, 18, 1);
-  line-height: 20px;
-}
-
-.chatroom-chevron-down {
-  width: 18px;
-  height: 18px;
+  position: absolute;
+  background-color: var(--g5);
+  top: 10%;
+  width: 70%;
+  height: 80%;
+  border-radius: 15px;
 }
