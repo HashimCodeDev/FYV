@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'fyv-production-0598.up.railway.app', // Allow requests from your frontend's origin
+    origin: 'https://fyv-production-0598.up.railway.app/', // Allow requests from your frontend's origin
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -18,7 +18,10 @@ const io = socketIo(server, {
 
 // Middleware
 app.use(
-  cors({ origin: 'fyv-production-0598.up.railway.app', credentials: true })
+  cors({
+    origin: 'https://fyv-production-0598.up.railway.app/',
+    credentials: true,
+  })
 ); // Allow requests from your frontend's origin
 app.use(bodyParser.json({ limit: '50mb' })); // Increase the limit for JSON payloads
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // Increase the limit for URL-encoded payloads
