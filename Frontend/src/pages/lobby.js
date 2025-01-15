@@ -7,7 +7,7 @@ import io from 'socket.io-client';
 import '../styles/lobby.css';
 
 const MainScreenOFF = (props) => {
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
   //   const token = localStorage.getItem('token');
 
   //   const verifyToken = async () => {
