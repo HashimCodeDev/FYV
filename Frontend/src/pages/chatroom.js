@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Webcam from 'react-webcam';
-import { Helmet } from 'react-helmet';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { app, analytics } from '../firebase'; // Import Firebase
+import Peer from 'peerjs';
 
 import '../styles/chatroom.css';
 
@@ -13,6 +10,13 @@ const Chatroom = () => {
   const [micEnabled, setMicEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+
+  const [peerId, setPeerId] = useState('');
+  const [remoteId, setRemoteId] = useState('');
+  const localVideoRef = useRef();
+  const remoteVideoRef = useRef();
+  const peerInstance = useRef();
+
   const socket = io('http://localhost:5000', {
     withCredentials: true,
   });
@@ -92,9 +96,117 @@ const Chatroom = () => {
     }
   };
 
+  useEffect(() => {
+    const peer = new Peer(undefined, {
+      host: 'localhost',
+      port: 5000,
+      path: '/peerjs',
+    });
+
+    peer.on('open', (id) => {
+      console.log('Connected to PeerJS server with ID:', id);
+      setPeerId(id);
+    });
+
+    peer.on('call', (call) => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true }) // Get local media (video + audio)
+        .then((mediaStream) => {
+          call.answer(mediaStream); // Answer the call with the local media stream
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream; // Display remote video
+          });
+        });
+    });
+
+    peerInstance.current = peer;
+
+    return () => {
+      peer.disconnect();
+    };
+  }, []);
+
+  const startCall = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((mediaStream) => {
+        localVideoRef.current.srcObject = mediaStream;
+
+        const call = peerInstance.current.call(remoteId, mediaStream);
+
+        call.on('stream', (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream; // Show remote video
+        });
+      })
+      .catch((err) => {
+        console.error('Error accessing media devices:', err);
+      });
+  };
+
+  useEffect(() => {
+    if (micEnabled && videoEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    } else if (!micEnabled && !videoEnabled) {
+      localVideoRef.current.srcObject = null;
+    } else if (!micEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    } else if (!videoEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    }
+  }, [micEnabled, videoEnabled]);
+
+  const Controls = () => {
+    return (
+      <div className='chatroom-controls'>
+        <button
+          onClick={toggleVideo}
+          className='video-toggle-btn'
+          aria-label={videoEnabled ? 'Turn off video' : 'Turn on video'}
+          title={videoEnabled ? 'Turn off video' : 'Turn on video'}>
+          <img
+            className='video'
+            src={
+              videoEnabled ? '/external/videoon.svg' : '/external/videooff.svg'
+            }
+            alt={videoEnabled ? 'Video on' : 'Video off'}
+          />
+        </button>
+        <button
+          onClick={toggleMic}
+          className='mic-toggle-btn'>
+          <img
+            className='mic'
+            src={micEnabled ? '/external/micon.svg' : '/external/micoff.svg'}
+            alt={micEnabled ? 'Microphone on' : 'Microphone off'}
+          />
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className='chatroom-container'>
       <div className='chatroom-header'>
+        <p>Your Peer ID: {peerId}</p>
+        <input
+          type='text'
+          placeholder='Enter remote peer ID'
+          value={remoteId}
+          onChange={(e) => setRemoteId(e.target.value)}
+        />
+        <button onClick={startCall}>Start Call</button>
         <div className='chatroom-logo'>
           <img
             className='logo'
@@ -106,8 +218,18 @@ const Chatroom = () => {
           <a>{formatTime(time)}</a>
         </div>
       </div>
-      <div className='chatroom-local-screen'></div>
-      <div className='chatroom-remote-screen'></div>
+      <div className='chatroom-local-screen'>
+        <video
+          ref={localVideoRef}
+          autoPlay
+          muted></video>
+      </div>
+      <div className='chatroom-remote-screen'>
+        <video
+          ref={remoteVideoRef}
+          autoPlay></video>
+      </div>
+      <Controls />
     </div>
   );
 };

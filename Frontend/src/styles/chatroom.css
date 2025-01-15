@@ -68,3 +68,47 @@
   height: 80%;
   border-radius: 15px;
 }
+
+video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  z-index: 2;
+}
+
+.chatroom-local-screen{
+  display: flex;
+  position: absolute;
+  background-color: var(--g4);
+  top: 65%;
+  width: 18%;
+  height: 20%;
+  right: 50px;
+  border-radius: 15px;
+  z-index: 1;
+}
+
+.chatroom-controls{
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 10%;
+  justify-content: center;
+}
+
+.video-toggle-btn,.mic-toggle-btn{
+  align-self: center;
+  position: relative;
+  bottom: 10px;
+  padding: 20px;
+}
+
+.video,.mic{
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}

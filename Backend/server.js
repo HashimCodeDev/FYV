@@ -35,11 +35,7 @@ app.use((err, req, res, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
+  socket.on('disconnect', () => {});
 
   // Handle incoming chat messages
   socket.on('chatMessage', (message) => {
