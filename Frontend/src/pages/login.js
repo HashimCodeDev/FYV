@@ -153,6 +153,10 @@ const Login = () => {
             Sign in with college ID card
           </button>
         </form>
+        <div className='registerButton'><a>New Here</a>
+        <Link to='/register'>Register</Link>
+        </div>
+        
       </div>
     </div>
   );
