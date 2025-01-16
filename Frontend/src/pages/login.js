@@ -12,6 +12,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -23,7 +25,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'https://fyv-production.up.railway.app/api/auth/login',
+        `${apiUrl}/api/auth/login`,
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

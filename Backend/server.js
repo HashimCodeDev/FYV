@@ -8,9 +8,11 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const server = http.createServer(app);
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+console.log(apiUrl);
 const io = socketIo(server, {
   cors: {
-    origin: 'https://fyv-production-0598.up.railway.app', // Allow requests from your frontend's origin
+    origin: apiUrl, // Allow requests from your frontend's origin
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -19,7 +21,7 @@ const io = socketIo(server, {
 // Middleware
 app.use(
   cors({
-    origin: 'https://fyv-production-0598.up.railway.app',
+    origin: apiUrl,
     credentials: true,
   })
 ); // Allow requests from your frontend's origin
