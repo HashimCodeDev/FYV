@@ -9,6 +9,12 @@ const peerRoutes = require('./routes/peerRoutes');
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+module.exports = app;
+
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
