@@ -139,21 +139,29 @@ const SignUpPage = () => {
 
           {/* Interests Dropdown */}
           <label className="form-label">
-            Select 3 Interests
-            <select
-              multiple
-              className="form-input"
-              value={interests}
-              onChange={handleInterestChange}
-              required
-            >
-              {allInterests.map((interest, index) => (
-                <option key={index} value={interest}>
-                  {interest}
-                </option>
-              ))}
-            </select>
-          </label>
+  Select 3 Interests
+  <div className="checkbox-group">
+    {allInterests.map((interest, index) => (
+      <label key={index} className="checkbox-label">
+        <input
+          type="checkbox"
+          value={interest}
+          checked={interests.includes(interest)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (e.target.checked) {
+              setInterests([...interests, value]); // Add the selected interest
+            } else {
+              setInterests(interests.filter((item) => item !== value)); // Remove the deselected interest
+            }
+          }}
+        />
+        {interest}
+      </label>
+    ))}
+  </div>
+</label>
+
 
           {/* Inline Error Message */}
           {error && <div className="form-error">{error}</div>}
