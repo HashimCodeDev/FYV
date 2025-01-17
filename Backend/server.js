@@ -1,5 +1,7 @@
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -7,8 +9,10 @@ const config = require('./config');
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const server = http.createServer(app);
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+
+const server = https.createServer(app);
+//const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+const apiUrl = 'https://192.168.1.3:3000';
 console.log(apiUrl);
 const io = socketIo(server, {
   cors: {
