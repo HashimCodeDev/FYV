@@ -17,8 +17,8 @@ const Chatroom = () => {
   const remoteVideoRef = useRef();
   const peerInstance = useRef();
 
-  // const server = process.env.REACT_APP_API_URL;
-  const server = 'https://192.168.1.3:5000';
+  const server = process.env.REACT_APP_API_URL;
+  // const server = 'https://192.168.1.3:5000';
 
   const socket = io(server, {
     withCredentials: true,

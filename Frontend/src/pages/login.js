@@ -12,8 +12,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // const apiUrl = process.env.REACT_APP_API_URL;
-  const apiUrl = 'https://192.168.1.3:5000';
+  const apiUrl = process.env.REACT_APP_API_URL;
+  // const apiUrl = 'https://192.168.137.1:5000';
 
   const handleSubmit = async (event) => {
     event.preventDefault();
