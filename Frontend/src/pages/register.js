@@ -15,7 +15,7 @@ const SignUpPage = () => {
   const [error, setError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate=useNavigate()
-  const apiUrl=ProcessingInstruction.env.REACT_APP_API_URL;
+  const apiUrl=process.env.REACT_APP_API_URL;
   
     
   // List of interests
