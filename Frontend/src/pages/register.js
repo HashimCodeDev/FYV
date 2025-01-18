@@ -15,7 +15,7 @@ const SignUpPage = () => {
   const [error, setError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate=useNavigate()
-
+  const apiUrl=ProcessingInstruction.env.REACT_APP_API_URL;
   
     
   // List of interests
@@ -35,7 +35,7 @@ const SignUpPage = () => {
     }
     try {
         const response = await axios.post(
-          'http://localhost:5000/api/auth/register',
+           `${apiUrl}/api/auth/register`,
           { name,email, password,interests},
           { headers: { 'Content-Type': 'application/json' } }
         );
