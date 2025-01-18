@@ -5,10 +5,12 @@ import { Helmet } from 'react-helmet';
 import io from 'socket.io-client';
 
 import '../styles/lobby.css';
+import axios from 'axios';
 
 const MainScreenOFF = (props) => {
   const navigate = useNavigate();
-  //   const token = localStorage.getItem('token');
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const userId = localStorage.getItem('userId');
 
   //   const verifyToken = async () => {
   //     try {
@@ -44,7 +46,7 @@ const MainScreenOFF = (props) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate('/Chatroom');
+    navigate('/chatroom');
   };
 
   const handleSignOut = async (event) => {

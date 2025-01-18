@@ -1,169 +1,91 @@
-// /*const { db } = require('../firebase');
+const { db } = require('../firebase');
+const bcrypt = require('bcryptjs');
+const config = require('../config');
 
-// // Function to generate a unique 6-digit peerId
-// /*function generatePeerId() {
-//   return Math.floor(100000 + Math.random() * 900000).toString();
-// }*/
-// // Get Peer ID
-// exports.getPeerId = (req, res) => {
-//   const peerId = req.params.id;
-//   res.json({ peerId });
-// };
+exports.getPeerId = async (req, res) => {
+  const { peerId } = req.body;
 
-// // Add Peer Data to Firestore
-// exports.addPeerData = async (req, res) => {
-//   const { peerId, user_id_1, user_id_2, status } = req.body;
+  try {
+    const peerRef = db.collection('connection').doc(peerId);
+    const peerDoc = await peerRef.get();
+    if (!peerDoc.exists) {
+      console.error('No matching documents.');
+      return res.status(400).json({ error: 'Invalid peerId' });
+    }
+    const peerData = peerDoc.data();
+    const users = peerData.users;
+    res.status(200).json({ users, peerId });
+  } catch (e) {
+    console.error('Error getting peer ID:', e);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
-//   try {
-//     const peerRef = db.collection('peers').doc(peerId);
+exports.joinRoom = async (req, res) => {
+  const { userId, peerId } = req.body;
 
-//     const doc = await peerRef.get();
-//     if (doc.exists) {
-//       res.status(400).send('Error: Document with this peerId already exists.');
-//       return;
-//     }
+  try {
+    const connectionSnapshot = await db
+      .collection('connection')
+      .where('userId', '==', userId)
+      .get();
 
-//     await peerRef.set({
-//       user_id_1,
-//       user_id_2,
-//       status,
-//     });
+    console.log(connectionSnapshot.docs[0]);
+    if (connectionSnapshot.empty) {
+      const connectionRef = db.collection('connection').doc();
+      await connectionRef.set({
+        userId: userId,
+        peerId: peerId,
+        status: 2,
+        joinedAt: new Date(),
+      });
+    } else {
+      // If a document with the userId exists, update the joinedAt field
+      const connectionDoc = connectionSnapshot.docs[0];
+      await connectionDoc.ref.update({
+        joinedAt: new Date(),
+      });
+    }
+    res.status(201).json({ message: 'User joined successfully' });
+  } catch (error) {
+    console.error('Error joining room:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
-//     res.status(201).send('Document successfully written!');
-//   } catch (error) {
-//     console.error('Error writing document: ', error);
-//     res.status(500).send('Error writing document');
-//   }
-// };
+exports.matchMake = async (req, res) => {
+  const { userId } = req.body;
 
-// // Add User to Matching Collection
-// exports.addUserToMatching = async (req, res) => {
-//   const { userid, status } = req.body;
+  try {
+    const connectionSnapshot = await db
+      .collection('connection')
+      .where('status', '==', 2)
+      .get();
+    console.log(connectionSnapshot.docs[0]);
 
-//   try {
-//     await db.collection('matching').doc(userid).set({ status });
-//     res.status(201).send('User status added to matching collection');
-//   } catch (error) {
-//     console.error('Error adding user to matching collection:', error);
-//     res.status(500).send('Error adding user to matching collection');
-//   }
-// };
+    if (connectionSnapshot.empty) {
+      console.error('No matching documents.');
+      return res.status(404).json({ error: 'No users found for matching' });
+    }
+    const users = connectionSnapshot.docs.map((doc) => ({
+      userid: doc.id,
+      ...doc.data(),
+    }));
+    const randomUser = users[Math.floor(Math.random() * users.length)];
 
-// // Fetch and Connect Users
-// exports.fetchAndConnectUsers = async (req, res) => {
-//   try {
-//     const userStatusRef = db.collection('matching');
-//     const querySnapshot = await userStatusRef.where('status', '==', 2).get();
+    // Update user statuses to matched (1) in both sessions and matching collections
+    // const batch = db.batch();
+    // batch.update(db.collection('connection').doc(userId), { status: 1 });
+    // batch.update(db.collection('connection').doc(randomUser.userid), {
+    //   status: 1,
+    // });
+    // await batch.commit();
 
-//     if (querySnapshot.empty) {
-//       res.status(404).send('No users with status 2 found');
-//       return;
-//     }
-
-//     const users = querySnapshot.docs.map(doc => ({ userid: doc.id, ...doc.data() }));
-
-//     if (users.length < 2) {
-//       res.status(200).send('Not enough users to connect');
-//       return;
-//     }
-
-//     const [user1, user2] = users;
-//     const peerId = generatePeerId();
-
-//     const peerConnectionsRef = db.collection('peer_connections').doc(peerId);
-//     await peerConnectionsRef.set({
-//       peerId,
-//       users: [
-//         { userid: user1.userid, status: 1 }, // Connected
-//         { userid: user2.userid, status: 1 }  // Connected
-//       ],
-//       createdAt: new Date().toISOString()
-//     });
-
-//     await userStatusRef.doc(user1.userid).update({ status: 1, peerId });
-//     await userStatusRef.doc(user2.userid).update({ status: 1, peerId });
-
-//     // Add session entry
-//     const sessionRef = db.collection('sessions').doc(peerId);
-//     await sessionRef.set({
-//       peerId,
-//       users: [
-//         { userid: user1.userid },
-//         { userid: user2.userid }
-//       ],
-//       createdAt: new Date().toISOString()
-//     });
-
-//     res.status(200).send({ peerId, users: [user1.userid, user2.userid] });
-//   } catch (error) {
-//     console.error('Error fetching and connecting users:', error);
-//     res.status(500).send('Error fetching and connecting users');
-//   }
-// };
-
-// // Establish Video Chat Connection using PeerJS
-// exports.establishVideoChat = async (req, res) => {
-//   const { peerId } = req.body;
-
-//   try {
-//     const sessionRef = db.collection('sessions').doc(peerId);
-//     const sessionDoc = await sessionRef.get();
-
-//     if (!sessionDoc.exists) {
-//       return res.status(404).json({ error: 'Session not found' });
-//     }
-
-//     const sessionData = sessionDoc.data();
-//     const users = sessionData.users;
-
-//     // Instruct the clients to connect via PeerJS
-//     users.forEach(user => {
-//       console.log(`Instructing user to connect via PeerJS: ${user.userid}`);
-//     });
-
-//     res.status(200).json({ message: 'Video chat connection established using PeerJS', users, peerId });
-//   } catch (error) {
-//     console.error('Error establishing video chat connection using PeerJS:', error);
-//     res.status(500).json({ error: 'Error establishing video chat connection using PeerJS' });
-//   }
-// };
-
-// // Disconnect Users from Video Chat
-// exports.disconnectVideoChat = async (req, res) => {
-//   const { peerId } = req.body;
-
-//   try {
-//     const sessionRef = db.collection('sessions').doc(peerId);
-//     const sessionDoc = await sessionRef.get();
-
-//     if (!sessionDoc.exists) {
-//       return res.status(404).json({ error: 'Session not found' });
-//     }
-
-//     const sessionData = sessionDoc.data();
-//     const users = sessionData.users;
-
-//     // Update user statuses to disconnected (3) in both sessions and matching collections
-//     const batch = db.batch();
-//     users.forEach(user => {
-//       const userStatusRef = db.collection('matching').doc(user.userid);
-//       batch.update(userStatusRef, { status: 3 });
-//     });
-
-//     // Commit batch update
-//     await batch.commit();
-
-//     res.status(200).json({ message: 'Users disconnected from video chat', peerId });
-//   } catch (error) {
-//     console.error('Error disconnecting users from video chat:', error);
-//     res.status(500).json({ error: 'Error disconnecting users from video chat' });
-//   }
-// };
-
-// exports.getUserId = (req, res) => {
-//   const { userId } = req.body;
-//   if (!userId) {
-//     return res.status(400).json({ error: 'User ID is required' });
-//   }
-//   res.json({ message: 'User ID received', userId });
-// };*/
+    res
+      .status(200)
+      .json({ message: 'Users matched', userId, remoteId: randomUser.userid });
+  } catch (error) {
+    console.error('Error matching users:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};

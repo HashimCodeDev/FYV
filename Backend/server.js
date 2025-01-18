@@ -7,6 +7,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const authRoutes = require('./routes/authRoutes');
+const peerRoutes = require('./routes/peerRoutes');
 
 const app = express();
 
@@ -45,6 +46,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS =
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/peer', peerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

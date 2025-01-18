@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import Peer from 'peerjs';
+import axios from 'axios';
 
 import '../styles/chatroom.css';
 
@@ -181,9 +182,19 @@ const Chatroom = () => {
       ],
     });
 
-    peer.on('open', (id) => {
+    peer.on('open', async (id) => {
       console.log('Connected to PeerJS server with ID:', id);
       setPeerId(id);
+
+      try {
+        const joinRoom = await axios.post(
+          `${server}/api/peer/joinRoom`,
+          { userId, peerId: id },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+      } catch (error) {
+        console.error('Error joining room:', error);
+      }
     });
 
     peer.on('call', (call) => {
@@ -199,26 +210,55 @@ const Chatroom = () => {
 
     peerInstance.current = peer;
 
+    startCall();
+
     return () => {
       peer.disconnect();
     };
   }, []);
 
-  const startCall = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((mediaStream) => {
-        localVideoRef.current.srcObject = mediaStream;
+  const startCall = async () => {
+    try {
+      let remoteId = null;
 
-        const call = peerInstance.current.call(remoteId, mediaStream);
+      // Loop until a matching user is found
+      while (!remoteId) {
+        const response = await axios.post(
+          `${server}/api/peer/matchmake`,
+          { userId },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
 
-        call.on('stream', (remoteStream) => {
-          remoteVideoRef.current.srcObject = remoteStream; // Show remote video
+        remoteId = response.data.remoteId; // Get remoteId from the response
+
+        // If no match, wait for a few seconds before trying again
+        if (!remoteId) {
+          console.log('No match found. Retrying...');
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
+        }
+      }
+
+      setRemoteId(remoteId); // Set the remoteId once a match is found
+
+      // After a match is found, start the media stream and initiate the call
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+
+          // Initiate the call with the found remoteId
+          const call = peerInstance.current.call(remoteId, mediaStream);
+
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream; // Show remote video
+          });
+        })
+        .catch((err) => {
+          console.error('Error accessing media devices:', err);
         });
-      })
-      .catch((err) => {
-        console.error('Error accessing media devices:', err);
-      });
+    } catch (err) {
+      console.error('Error starting call:', err);
+    }
   };
 
   useEffect(() => {

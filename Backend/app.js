@@ -14,7 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 
 module.exports = app;
 
-
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,8 +22,5 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/peer', peerRoutes);
-
-// PeerJS server
-// const peerServer = PeerServer({ port: 9000, path: '/peerjs' }); // Remove this line
 
 module.exports = app;
