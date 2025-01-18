@@ -167,41 +167,14 @@ const Chatroom = () => {
       port: 443,
       path: '/',
       iceServers: [
-        // Google's Public STUN Server
-        {
-          urls: 'stun:stun.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun1.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun2.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun3.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun4.l.google.com:19302',
-        },
+        // Free STUN servers
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun.services.mozilla.com' },
+        { urls: 'stun:openrelay.metered.ca:80' },
 
-        // Mozilla's Public STUN Server
-        {
-          urls: 'stun:stun.services.mozilla.com',
-        },
-
-        // OpenRelay TURN Server
-        {
-          urls: 'turn:openrelay.metered.ca:80',
-          username: 'openrelayproject',
-          credential: 'openrelayproject',
-        },
+        // Free TURN servers
         {
           urls: 'turn:openrelay.metered.ca:443',
-          username: 'openrelayproject',
-          credential: 'openrelayproject',
-        },
-        {
-          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
           username: 'openrelayproject',
           credential: 'openrelayproject',
         },
