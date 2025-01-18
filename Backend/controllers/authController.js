@@ -53,7 +53,11 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ message: 'Login Succesful ', JwtToken: token });
+    res.json({
+      message: 'Login successful',
+      userId: userSnapshot.docs[0].id,
+      JwtToken: token,
+    });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'Server error' });

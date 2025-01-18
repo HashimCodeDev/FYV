@@ -17,6 +17,8 @@ const Chatroom = () => {
   const remoteVideoRef = useRef();
   const peerInstance = useRef();
 
+  const userId = localStorage.getItem('userId');
+
   const server = process.env.REACT_APP_API_URL;
   // const server = 'https://192.168.1.3:5000';
 
@@ -99,11 +101,72 @@ const Chatroom = () => {
     }
   };
 
+  //Stun and Turn Servers
+  const iceConfiguration = {
+    iceServers: [
+      // Google's Public STUN Server
+      {
+        urls: 'stun:stun.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun1.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun2.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun3.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun4.l.google.com:19302',
+      },
+
+      // Mozilla's Public STUN Server
+      {
+        urls: 'stun:stun.services.mozilla.com',
+      },
+
+      // OpenRelay TURN Server
+      {
+        urls: 'turn:openrelay.metered.ca:80',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+
+      // Twilio's Public STUN Server (optional, for testing)
+      {
+        urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+      },
+
+      // Additional STUN Servers (Community-hosted)
+      {
+        urls: 'stun:stun.stunprotocol.org:3478',
+      },
+      {
+        urls: 'stun:stun.sipnet.net',
+      },
+      {
+        urls: 'stun:stun.ideasip.com',
+      },
+    ],
+  };
+
   useEffect(() => {
     const peer = new Peer(undefined, {
       host: '0.peerjs.com',
       port: 443,
       path: '/',
+      config: iceConfiguration,
     });
 
     peer.on('open', (id) => {

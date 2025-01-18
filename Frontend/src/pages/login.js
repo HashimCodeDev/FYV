@@ -35,6 +35,7 @@ const Login = () => {
       setError('');
 
       localStorage.setItem('token', response.data.JwtToken);
+      localStorage.setItem('userId', response.data.userId);
 
       // Connect to WebSocket server
       const socket = io(apiUrl, {
