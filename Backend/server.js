@@ -17,7 +17,7 @@ const app = express();
 // };
 
 const server = http.createServer(app);
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+const apiUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 // const apiUrl = 'https://192.168.137.1:3000';
 console.log(apiUrl);
 const io = socketIo(server, {
