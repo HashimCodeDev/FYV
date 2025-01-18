@@ -22,8 +22,8 @@ const apiUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 console.log(apiUrl);
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:3000', apiUrl], // Allow requests from both localhost and your frontend's origin
-    methods: ['GET', 'POST'],
+    origin: '*', // Allow requests from both localhost and your frontend's origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
 });
@@ -31,7 +31,7 @@ const io = socketIo(server, {
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:3000', apiUrl], // Allow requests from both localhost and your frontend's origin
+    origin: '*', // Allow requests from both localhost and your frontend's origin
     methods: ['GET', 'POST'],
     credentials: true,
   })
