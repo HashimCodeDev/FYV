@@ -15,6 +15,8 @@ import Profilesetting from './pages/profilesetting'; // Import Profilesetting
 import Lobby from './pages/lobby'; // Import Lobby
 import NotFound from './pages/not-found'; // Import NotFound
 import ScanId from './pages/scanId'; // Import ScanId
+import Register from './pages/register';
+
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -31,6 +33,10 @@ const App = () => {
         <Route
           path='/login'
           element={<Login />}
+        />
+        <Route
+          path='/register'
+          element={<Register/>}
         />
         <Route
           path='/'

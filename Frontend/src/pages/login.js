@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -153,6 +153,10 @@ const Login = () => {
             Sign in with college ID card
           </button>
         </form>
+        <div className='registerButton'><a> <h4>New Here</h4> </a>
+        <Link to='/register'>Click here to register</Link>
+        </div>
+        
       </div>
     </div>
   );
