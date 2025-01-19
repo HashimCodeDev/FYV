@@ -59,8 +59,13 @@ const SignUpPage = () => {
       setError('');
       navigate('/login');
     } catch (error) {
-      console.error('registration error:', error);
-      setError('An unexpected error occurred. Please try again.');
+      console.error('Register error:', error);
+      if (error.response && error.response.status === 400) {
+        setError('User Already Exists!');
+        return;
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
 
     if (interests.length < 3) {
@@ -70,7 +75,6 @@ const SignUpPage = () => {
 
     // Further form submission logic can go here, e.g., sending the data to a server.
     setError(''); // Clear any previous error
-    console.log('Registration successful');
   };
 
   // Handle change in interests (select multiple)
