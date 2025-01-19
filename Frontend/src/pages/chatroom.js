@@ -182,22 +182,27 @@ const Chatroom = () => {
       ],
     });
 
-    peer.on('open', async (id) => {
-      console.log('Connected to PeerJS server with ID:', id);
-      setPeerId(id);
+    peer.on(
+      'open',
+      async (id) => {
+        console.log('Connected to PeerJS server with ID:', id);
+        setPeerId(id);
 
-      try {
-        const joinRoom = await axios.post(
-          `${server}/api/peer/joinRoom`,
-          { userId, peerId },
-          { headers: { 'Content-Type': 'application/json' } }
-        );
-      } catch (error) {
-        console.error('Error joining room:', error);
-      }
-    });
+        try {
+          const joinRoom = await axios.post(
+            `${server}/api/peer/joinRoom`,
+            { userId, peerId },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+          startCall();
+        } catch (error) {
+          console.error('Error joining room:', error);
+        }
+      },
+      [peerId]
+    );
 
-    peer.on('call', (call) => {
+    peer.on('call', async (call) => {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true }) // Get local media (video + audio)
         .then((mediaStream) => {
@@ -209,8 +214,6 @@ const Chatroom = () => {
     });
 
     peerInstance.current = peer;
-
-    startCall();
 
     return () => {
       peer.disconnect();
