@@ -62,13 +62,13 @@ exports.matchMake = async (req, res) => {
       .where('status', '==', 2)
       .where('userId', '!=', userId)
       .get();
-    console.log(connectionSnapshot.docs[0]);
+    console.log('Users Found', connectionSnapshot.docs[0]);
 
     if (connectionSnapshot.empty) {
       console.error('No matching documents.');
       return res.status(200).json({ error: 'No users found for matching' });
     }
-    const users = connectionSnapshot.docs.map((doc) => ({
+    const users = connectionSnapshot.docs[0].map((doc) => ({
       userid: doc.id,
       ...doc.data(),
     }));
