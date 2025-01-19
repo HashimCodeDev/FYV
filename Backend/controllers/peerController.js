@@ -55,8 +55,10 @@ exports.joinRoom = async (req, res) => {
 
 exports.matchMake = async (req, res) => {
   const { userId } = req.body;
+  console.log('User trying to match:', userId);
 
   try {
+    console.log('Finding Match');
     const connectionSnapshot = await db
       .collection('connection')
       .where('status', '==', 2)
