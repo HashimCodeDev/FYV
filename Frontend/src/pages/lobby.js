@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Helmet } from 'react-helmet';
@@ -11,6 +11,7 @@ const MainScreenOFF = (props) => {
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   const userId = localStorage.getItem('userId');
+  const [loading, setLoading] = useState(false);
 
   //   const verifyToken = async () => {
   //     try {

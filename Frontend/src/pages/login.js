@@ -11,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const apiUrl = process.env.REACT_APP_API_URL;
   // const apiUrl = 'https://192.168.137.1:5000';
@@ -25,6 +26,7 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${apiUrl}/api/auth/login`,
         { email, password },
@@ -68,10 +70,7 @@ const Login = () => {
 
   return (
     <div className='login-container'>
-      <Helmet>
-        <title>Login - FYV</title>
-      </Helmet>
-
+      {loading && <img src='/external/login.gif' />}
       <div className='login-image-section'>
         <img
           src='/external/loginpage16363-yf5-900w.png'

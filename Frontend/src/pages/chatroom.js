@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import Peer from 'peerjs';
 import axios from 'axios';
@@ -11,6 +12,8 @@ const Chatroom = () => {
   const [micEnabled, setMicEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [cancelRetry, setCancelRetry] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [peerId, setPeerId] = useState('');
   const [remoteId, setRemoteId] = useState('');
@@ -19,6 +22,7 @@ const Chatroom = () => {
   const peerInstance = useRef();
 
   const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
 
   const server = process.env.REACT_APP_API_URL;
   // const server = 'https://192.168.1.3:5000';
@@ -174,6 +178,26 @@ const Chatroom = () => {
     ],
   };
 
+  const leaveRoom = async () => {
+    try {
+      const response = await axios.post(
+        `${server}/api/peer/leaveroom`,
+        { userId, peerId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      setCancelRetry(true);
+      navigate('/lobby');
+    } catch (e) {
+      console.error('Error leaving room:', e);
+    }
+  };
+
+  const startNextCall = async () => {
+    if (!remoteId) {
+      return;
+    }
+  };
+
   useEffect(() => {
     const socket = io(server, {
       withCredentials: true,
@@ -242,6 +266,10 @@ const Chatroom = () => {
 
       // Loop until a matching user is found
       while (!remoteId) {
+        if (cancelRetry) {
+          return;
+        }
+        // Make a request to the server to find a matching user
         const response = await axios.post(
           `${server}/api/peer/matchmake`,
           { userId },
@@ -251,12 +279,13 @@ const Chatroom = () => {
         remoteId = response.data.remoteId; // Get remoteId from the response
 
         // If no match, wait for a few seconds before trying again
-        if (!remoteId) {
+        if (!remoteId && !cancelRetry) {
           console.log('No match found. Retrying...');
           await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
         }
       }
 
+      setLoading(false);
       setRemoteId(remoteId); // Set the remoteId once a match is found
       console.log('Found match with remoteId:', remoteId);
 
@@ -330,12 +359,28 @@ const Chatroom = () => {
             alt={micEnabled ? 'Microphone on' : 'Microphone off'}
           />
         </button>
+        <button
+          onClick={leaveRoom}
+          className='leave-btn'>
+          <img
+            className='exit'
+            src='/external/exit.svg'
+            alt='exit button'
+          />
+        </button>
       </div>
     );
   };
 
   return (
     <div className='chatroom-container'>
+      {loading && (
+        <img
+          className='loading-spinner'
+          src='/external/loading.svg'
+          alt='Loading...'
+        />
+      )}
       <div className='chatroom-header'>
         <div className='chatroom-logo'>
           <img
@@ -346,6 +391,14 @@ const Chatroom = () => {
         <div className='chatroom-title'>
           <h1>CHAT ROOM</h1>
           <a>{formatTime(time)}</a>
+        </div>
+        <div className='next-btn'>
+          <button onClick={startNextCall}>Next Call</button>
+          <img
+            className='next'
+            src='/external/next.svg'
+            alt='next button'
+          />
         </div>
       </div>
       <div className='chatroom-local-screen'>
