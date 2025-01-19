@@ -76,10 +76,11 @@ exports.matchMake = async (req, res) => {
     return res.status(200).json({ error: 'No users found for matching' });
   }
   const users = connectionSnapshot.docs.map((doc) => ({
-    userid: doc.userId,
+    userId: doc.userId,
     ...doc.data(),
   }));
   const randomUser = users[Math.floor(Math.random() * users.length)];
+  console.log('Random User Id:', randomUser.userId);
 
   // Update user statuses to matched (1) in both sessions and matching collections
   const batch = db.batch();
@@ -88,7 +89,7 @@ exports.matchMake = async (req, res) => {
   const userDocRef = db.collection('connection').where('userId', '==', userId);
   const randomUserDocRef = db
     .collection('connection')
-    .where('userId', '==', randomUser.userid);
+    .where('userId', '==', randomUser.userId);
 
   try {
     // Get the snapshot of the documents for both userId and randomUser.userid
