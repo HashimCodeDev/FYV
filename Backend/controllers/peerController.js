@@ -70,7 +70,7 @@ exports.matchMake = async (req, res) => {
       console.error('No matching documents.');
       return res.status(200).json({ error: 'No users found for matching' });
     }
-    const users = connectionSnapshot.docs[0].map((doc) => ({
+    const users = connectionSnapshot.docs.map((doc) => ({
       userid: doc.id,
       ...doc.data(),
     }));
