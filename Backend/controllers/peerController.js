@@ -43,6 +43,7 @@ exports.joinRoom = async (req, res) => {
       // If a document with the userId exists, update the joinedAt field
       const connectionDoc = connectionSnapshot.docs[0];
       await connectionDoc.ref.update({
+        peerId: peerId,
         joinedAt: new Date(),
       });
     }
