@@ -8,13 +8,20 @@ const path = require('path');
 const fs = require('fs');
 
 exports.register = async (req, res) => {
-  const { email, password } = req.body;
+  const {name, email, password,interests } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log('Hashed password:', hashedPassword);
     const userRef = db.collection('users').doc();
-    await userRef.set({ email, password: hashedPassword });
+    await userRef.set({name, email, password: hashedPassword });
+    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    let userid;
+    userSnapshot.forEach(doc => {
+      userid = doc.id;
+    });
+    const interestRef = db.collection('interests').doc();
+    await interestRef.set({userid,interest:interests});
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {

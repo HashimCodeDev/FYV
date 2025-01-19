@@ -204,3 +204,23 @@ html, body {
 .login-signup-offer a:hover {
   text-decoration: underline;
 }
+
+.registerButton {
+  text-align: center; /* Center align the content */
+  margin-top: 1cm; /* Add 1cm spacing from the element above */
+}
+
+.registerButton h4 {
+  color: black; /* Set the heading text color to black */
+  font-weight: bold; /* Make the heading bold */
+  margin: 0; /* Remove default margin for better control */
+}
+
+.registerButton a {
+  color: blue; /* Set the link text color to blue */
+  text-decoration: underline; /* Add underline to the link */
+}
+
+.registerButton a:hover {
+  color: darkblue; /* Optional: Change color on hover for better interaction */
+}
