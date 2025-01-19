@@ -77,12 +77,12 @@ exports.matchMake = async (req, res) => {
     const randomUser = users[Math.floor(Math.random() * users.length)];
 
     // Update user statuses to matched (1) in both sessions and matching collections
-    // const batch = db.batch();
-    // batch.update(db.collection('connection').doc(userId), { status: 1 });
-    // batch.update(db.collection('connection').doc(randomUser.userid), {
-    //   status: 1,
-    // });
-    // await batch.commit();
+    const batch = db.batch();
+   batch.update(db.collection('connection').doc(userId), { status: 1 });
+     batch.update(db.collection('connection').doc(randomUser.userid), {
+      status: 1,
+     });
+   await batch.commit();
 
     console.log(randomUser);
 
