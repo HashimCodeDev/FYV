@@ -23,7 +23,6 @@ exports.getPeerId = async (req, res) => {
 
 exports.joinRoom = async (req, res) => {
   const { userId, peerId } = req.body;
-  console.log(peerId);
 
   try {
     const connectionSnapshot = await db
@@ -31,7 +30,6 @@ exports.joinRoom = async (req, res) => {
       .where('userId', '==', userId)
       .get();
 
-    console.log(connectionSnapshot.docs[0]);
     if (connectionSnapshot.empty) {
       const connectionRef = db.collection('connection').doc();
       await connectionRef.set({
@@ -62,12 +60,13 @@ exports.matchMake = async (req, res) => {
     const connectionSnapshot = await db
       .collection('connection')
       .where('status', '==', 2)
+      .where('userId', '!=', userId)
       .get();
     console.log(connectionSnapshot.docs[0]);
 
     if (connectionSnapshot.empty) {
       console.error('No matching documents.');
-      return res.status(404).json({ error: 'No users found for matching' });
+      return res.status(200).json({ error: 'No users found for matching' });
     }
     const users = connectionSnapshot.docs.map((doc) => ({
       userid: doc.id,
@@ -83,9 +82,11 @@ exports.matchMake = async (req, res) => {
     // });
     // await batch.commit();
 
+    console.log(randomUser);
+
     res
       .status(200)
-      .json({ message: 'Users matched', userId, remoteId: randomUser.userid });
+      .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
   } catch (error) {
     console.error('Error matching users:', error);
     res.status(500).json({ error: 'Server error' });

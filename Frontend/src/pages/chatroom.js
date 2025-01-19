@@ -23,10 +23,6 @@ const Chatroom = () => {
   const server = process.env.REACT_APP_API_URL;
   // const server = 'https://192.168.1.3:5000';
 
-  const socket = io(server, {
-    withCredentials: true,
-  });
-
   // Timer for chat duration
   useEffect(() => {
     const timer = setInterval(() => {
@@ -36,16 +32,16 @@ const Chatroom = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Handle incoming chat messages
-  useEffect(() => {
-    socket.on('chatMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+  // // Handle incoming chat messages
+  // useEffect(() => {
+  //   socket.on('chatMessage', (message) => {
+  //     setMessages((prevMessages) => [...prevMessages, message]);
+  //   });
 
-    return () => {
-      socket.off('chatMessage');
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off('chatMessage');
+  //   };
+  // }, [socket]);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -75,11 +71,27 @@ const Chatroom = () => {
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Toggle video state
-  const toggleVideo = () => setVideoEnabled((prev) => !prev);
+  const toggleVideo = () => {
+    setVideoEnabled((prev) => {
+      if (localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
+          track.enabled = !prev;
+        });
+      }
+      return !prev;
+    });
+  };
 
-  // Toggle mic state
-  const toggleMic = () => setMicEnabled((prev) => !prev);
+  const toggleMic = () => {
+    setMicEnabled((prev) => {
+      if (localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getAudioTracks().forEach((track) => {
+          track.enabled = !prev;
+        });
+      }
+      return !prev;
+    });
+  };
 
   // Send message
   const sendMessage = () => {
@@ -163,6 +175,9 @@ const Chatroom = () => {
   };
 
   useEffect(() => {
+    const socket = io(server, {
+      withCredentials: true,
+    });
     const peer = new Peer(undefined, {
       host: '0.peerjs.com',
       port: 443,
@@ -216,6 +231,7 @@ const Chatroom = () => {
     peerInstance.current = peer;
 
     return () => {
+      socket.close();
       peer.disconnect();
     };
   }, []);
@@ -242,6 +258,7 @@ const Chatroom = () => {
       }
 
       setRemoteId(remoteId); // Set the remoteId once a match is found
+      console.log('Found match with remoteId:', remoteId);
 
       // After a match is found, start the media stream and initiate the call
       navigator.mediaDevices
