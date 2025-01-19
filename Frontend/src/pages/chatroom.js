@@ -200,6 +200,7 @@ const Chatroom = () => {
         { userId },
         { headers: { 'Content-Type': 'application/json' } }
       );
+      startCall();
     } catch (e) {
       console.error('Error starting next call:', e);
     }
