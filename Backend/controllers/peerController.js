@@ -65,7 +65,7 @@ exports.matchMake = async (req, res) => {
       .where('status', '==', 2)
       .where('userId', '!=', userId)
       .get();
-    console.log('Users Found', connectionSnapshot.docs[0]);
+    console.log('Users Found', connectionSnapshot.docs[0].data());
   } catch (error) {
     console.error('Error matching users:', error);
     res.status(500).json({ error: 'Server error' });
