@@ -42,6 +42,7 @@ exports.joinRoom = async (req, res) => {
       // If a document with the userId exists, update the joinedAt field
       const connectionDoc = connectionSnapshot.docs[0];
       await connectionDoc.ref.update({
+        status: 2,
         peerId: peerId,
         joinedAt: new Date(),
       });
@@ -65,7 +66,7 @@ exports.matchMake = async (req, res) => {
       .where('status', '==', 2)
       .where('userId', '!=', userId)
       .get();
-    console.log('Users Found', connectionSnapshot.docs[0].data());
+    console.log('Users Found', connectionSnapshot.docs[0]);
   } catch (error) {
     console.error('Error matching users:', error);
     res.status(500).json({ error: 'Server error' });
@@ -95,6 +96,40 @@ exports.matchMake = async (req, res) => {
     // Get the snapshot of the documents for both userId and randomUser.userid
     const userSnapshot = await userDocRef.get();
     const randomUserSnapshot = await randomUserDocRef.get();
+
+    const TEN_SECONDS = 10000; // 10 seconds in milliseconds
+    const now = new Date();
+    const tenSecondsAgo = new Date(now.getTime() - TEN_SECONDS);
+
+    const sessionSnapshot = await db
+      .collection('session')
+      .where('status', '==', 1) // Match active sessions
+      .where('createdAt', '>=', tenSecondsAgo) // Check if created within the last 10 seconds
+      .get();
+
+    let sessionExists = false;
+
+    // Loop through the results to check if a session between the same users exists
+    sessionSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (
+        (data.userId1 === userId && data.userId2 === randomUser.userId) ||
+        (data.userId1 === randomUser.userId && data.userId2 === userId)
+      ) {
+        sessionExists = true; // Found a matching session
+      }
+    });
+
+    if (!sessionExists) {
+      // Add a new session since no matching session exists
+      await db.collection('session').add({
+        userId1: userId,
+        userId2: randomUser.userId,
+        createdAt: now,
+        status: 1,
+      });
+      console.log('New session created');
+    }
 
     if (!userSnapshot.empty && !randomUserSnapshot.empty) {
       // Update the status of the matched user documents
