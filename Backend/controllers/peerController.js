@@ -23,6 +23,7 @@ exports.getPeerId = async (req, res) => {
 
 exports.joinRoom = async (req, res) => {
   const { userId, peerId } = req.body;
+  console.log(peerId);
 
   try {
     const connectionSnapshot = await db
