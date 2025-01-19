@@ -12,7 +12,7 @@ const Chatroom = () => {
   const [micEnabled, setMicEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
-  const [cancelRetry, setCancelRetry] = useState(false);
+  const cancelRetry = useRef(false);
   const [loading, setLoading] = useState(true);
 
   const [peerId, setPeerId] = useState('');
@@ -185,7 +185,8 @@ const Chatroom = () => {
         { userId, peerId },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      setCancelRetry(true);
+
+      cancelRetry.current = true;
       navigate('/lobby');
     } catch (e) {
       console.error('Error leaving room:', e);
@@ -266,7 +267,7 @@ const Chatroom = () => {
 
       // Loop until a matching user is found
       while (!remoteId) {
-        if (cancelRetry) {
+        if (cancelRetry.current) {
           return;
         }
         // Make a request to the server to find a matching user
@@ -279,7 +280,7 @@ const Chatroom = () => {
         remoteId = response.data.remoteId; // Get remoteId from the response
 
         // If no match, wait for a few seconds before trying again
-        if (!remoteId && !cancelRetry) {
+        if (!remoteId && !cancelRetry.current) {
           console.log('No match found. Retrying...');
           await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
         }
