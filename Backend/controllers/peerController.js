@@ -71,18 +71,48 @@ exports.matchMake = async (req, res) => {
       return res.status(200).json({ error: 'No users found for matching' });
     }
     const users = connectionSnapshot.docs.map((doc) => ({
-      userid: doc.id,
+      userid: doc.userId,
       ...doc.data(),
     }));
     const randomUser = users[Math.floor(Math.random() * users.length)];
 
     // Update user statuses to matched (1) in both sessions and matching collections
     const batch = db.batch();
-   batch.update(db.collection('connection').doc(userId), { status: 1 });
-     batch.update(db.collection('connection').doc(randomUser.userid), {
-      status: 1,
-     });
-   await batch.commit();
+
+    // Find the document with the userId in the 'connection' collection
+    const userDocRef = db
+      .collection('connection')
+      .where('userId', '==', userId);
+    const randomUserDocRef = db
+      .collection('connection')
+      .where('userId', '==', randomUser.userid);
+
+    try {
+      // Get the snapshot of the documents for both userId and randomUser.userid
+      const userSnapshot = await userDocRef.get();
+      const randomUserSnapshot = await randomUserDocRef.get();
+
+      if (!userSnapshot.empty && !randomUserSnapshot.empty) {
+        // Update the status of the matched user documents
+        userSnapshot.forEach((doc) => {
+          batch.update(doc.ref, { status: 1 });
+        });
+
+        randomUserSnapshot.forEach((doc) => {
+          batch.update(doc.ref, { status: 1 });
+        });
+
+        // Commit the batch update
+        await batch.commit();
+        console.log('Status updated for both users');
+      } else {
+        console.error(
+          'No matching documents found for userId or randomUser.userid'
+        );
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
 
     console.log(randomUser);
 
