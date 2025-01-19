@@ -194,8 +194,14 @@ const Chatroom = () => {
   };
 
   const startNextCall = async () => {
-    if (!remoteId) {
-      return;
+    try {
+      const response = await axios.post(
+        `${server}/api/peer/startNextCall`,
+        { userId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+    } catch (e) {
+      console.error('Error starting next call:', e);
     }
   };
 
