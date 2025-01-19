@@ -189,7 +189,7 @@ const Chatroom = () => {
       try {
         const joinRoom = await axios.post(
           `${server}/api/peer/joinRoom`,
-          { userId, peerId: id },
+          { userId, peerId },
           { headers: { 'Content-Type': 'application/json' } }
         );
       } catch (error) {
