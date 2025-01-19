@@ -8,20 +8,34 @@ const path = require('path');
 const fs = require('fs');
 
 exports.register = async (req, res) => {
-  const {name, email, password,interests } = req.body;
+  const { name, email, password, interests } = req.body;
 
   try {
+    // Check if user already exists
+    const existingUser = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
+    if (!existingUser.empty) {
+      console.log('User already exists.');
+      return res
+        .status(400)
+        .json({ error: 'User already exists with this email' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log('Hashed password:', hashedPassword);
     const userRef = db.collection('users').doc();
-    await userRef.set({name, email, password: hashedPassword });
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    await userRef.set({ name, email, password: hashedPassword });
+    const userSnapshot = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
     let userid;
-    userSnapshot.forEach(doc => {
+    userSnapshot.forEach((doc) => {
       userid = doc.id;
     });
     const interestRef = db.collection('interests').doc();
-    await interestRef.set({userid,interest:interests});
+    await interestRef.set({ userid, interest: interests });
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
