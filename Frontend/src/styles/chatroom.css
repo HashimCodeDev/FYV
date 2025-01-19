@@ -74,7 +74,6 @@ video{
   height: 100%;
   object-fit: cover;
   border-radius: 15px;
-  z-index: 2;
 }
 
 .chatroom-local-screen{
@@ -111,4 +110,8 @@ video{
   height: 25px;
   object-fit: contain;
   transition: all 0.3s ease;
+}
+
+.local-video{
+  z-index: 3;
 }

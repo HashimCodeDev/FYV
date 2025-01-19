@@ -337,14 +337,6 @@ const Chatroom = () => {
   return (
     <div className='chatroom-container'>
       <div className='chatroom-header'>
-        <p>Your Peer ID: {peerId}</p>
-        <input
-          type='text'
-          placeholder='Enter remote peer ID'
-          value={remoteId}
-          onChange={(e) => setRemoteId(e.target.value)}
-        />
-        <button onClick={startCall}>Start Call</button>
         <div className='chatroom-logo'>
           <img
             className='logo'
@@ -358,6 +350,7 @@ const Chatroom = () => {
       </div>
       <div className='chatroom-local-screen'>
         <video
+          className='local-video'
           ref={localVideoRef}
           autoPlay
           muted></video>
