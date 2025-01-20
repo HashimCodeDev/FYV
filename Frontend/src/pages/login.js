@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -11,7 +10,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  
+  const [loading, setLoading] = useState(false);
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+  // const apiUrl = 'https://192.168.137.1:5000';
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -22,8 +25,9 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        `${apiUrl}/api/auth/login`,
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -32,9 +36,10 @@ const Login = () => {
       setError('');
 
       localStorage.setItem('token', response.data.JwtToken);
+      localStorage.setItem('userId', response.data.userId);
 
       // Connect to WebSocket server
-      const socket = io('http://localhost:5000', {
+      const socket = io(apiUrl, {
         withCredentials: true,
       });
 
@@ -51,7 +56,8 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       if (error.response && error.response.status === 400) {
-        setError('Invalid email or password.');
+        console.log('Login error:', error.response);
+        setError(error.response.data.error);
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -64,20 +70,15 @@ const Login = () => {
 
   return (
     <div className='login-container'>
-      <Helmet>
-        <title>Login - FYV</title>
-      </Helmet>
-
-      <div className='login-image-section'>
+      {loading && (
         <img
-          src='/external/loginpage16363-yf5-900w.png'
-          alt='Login Illustration'
-          className='login-image'
+          className='loading-spinner'
+          src='/external/loading.svg'
+          alt='Loading...'
         />
-      </div>
-
+      )}
       <div className='login-form-section'>
-        <h1 className='form-title'>Nice to see you again</h1>
+        <h1 className='login-title'>Sign in</h1>
 
         <form
           className='login-form'
@@ -88,7 +89,7 @@ const Login = () => {
             <input
               type='email'
               placeholder='Enter email'
-              className='form-input'
+              className='form-text'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -101,7 +102,7 @@ const Login = () => {
               <input
                 type={passwordVisible ? 'text' : 'password'}
                 placeholder='Enter password'
-                className='form-input'
+                className='form-text'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -112,7 +113,14 @@ const Login = () => {
                 aria-label={
                   passwordVisible ? 'Hide password' : 'Show password'
                 }>
-                {passwordVisible ? 'Hide' : 'Show'}
+                <img
+                  className='eye-icon'
+                  src={
+                    passwordVisible
+                      ? '/external/eye-on.svg'
+                      : 'external/eye-off.svg'
+                  }
+                />
               </button>
             </div>
           </label>
@@ -120,43 +128,18 @@ const Login = () => {
           {/* Inline Error Message */}
           {error && <div className='form-error'>{error}</div>}
 
-          {/* Form Options */}
-          <div className='form-options'>
-            <label className='remember-me'>
-              <input type='checkbox' />
-              Remember me
-            </label>
-            <Link
-              to='/forgot-password'
-              className='forgot-password'>
-              Forgot password?
-            </Link>
-          </div>
-
           {/* Sign In Button */}
           <button
             type='submit'
-            className='primary-button'>
-            Sign in
-          </button>
-
-          {/* Sign In with ID */}
-          <button
-            type='button'
-            className='secondary-button'
-            onClick={handleCollegeIdSignIn}>
-            <img
-              src='/external/qrcode.png'
-              alt='QR Code Icon'
-              className='qr-icon'
-            />
-            Sign in with college ID card
+            onClick={handleSubmit}
+            className='sign-in'>
+            Log in
           </button>
         </form>
-        <div className='registerButton'><a> <h4>New Here</h4> </a>
-        <Link to='/register'>Click here to register</Link>
+        <div className='links'>
+          <a onClick={() => navigate('/register')}>Sign Up</a>
+          <a>Forgot Password</a>
         </div>
-        
       </div>
     </div>
   );
