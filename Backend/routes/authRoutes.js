@@ -5,6 +5,7 @@ const {
   logout,
   disconnect,
   verify,
+  report,
 scanQRCode,
 } = require('../controllers/authController');
 
@@ -18,5 +19,7 @@ router.post('/login', login);
 router.post('/logout ', logout);
 router.post('/disconnect', disconnect);
 router.post('/verify', verify);
+router.post('/report', report);
+
 router.post('/scan', upload.single('idCard'), scanQRCode);
 module.exports = router;

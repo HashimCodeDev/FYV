@@ -123,14 +123,14 @@ button{
   justify-content: center;
 }
 
-.video-toggle-btn,.mic-toggle-btn,.leave-btn{
+.video-toggle-btn,.mic-toggle-btn,.leave-btn,.report-btn{
   align-self: center;
   position: relative;
   bottom: 10px;
   padding: 20px;
 }
 
-.video,.mic,.exit,.next{
+.video,.mic,.exit,.next,.report{
   width: 25px;
   height: 25px;
   object-fit: contain;
