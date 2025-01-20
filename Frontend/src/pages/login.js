@@ -70,8 +70,13 @@ const Login = () => {
 
   return (
     <div className='login-container'>
-      {loading && <img src='/external/login.gif' />}
-
+      {loading && (
+        <img
+          className='loading-spinner'
+          src='/external/loading.svg'
+          alt='Loading...'
+        />
+      )}
       <div className='login-form-section'>
         <h1 className='login-title'>Sign in</h1>
 
@@ -126,6 +131,7 @@ const Login = () => {
           {/* Sign In Button */}
           <button
             type='submit'
+            onClick={handleSubmit}
             className='sign-in'>
             Log in
           </button>

@@ -16,10 +16,33 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [interests, setInterests] = useState([]);
   const [error, setError] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isPolicyChecked, setIsPolicyChecked] = useState(false);
+
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  const handleCheckboxChange = (event) => {
+    setIsPolicyChecked(event.target.checked); // Update state based on checkbox status
+  };
+
+  const handleChange = (e) => {
+    // Get the selected options as an array
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+
+    // Add the new selected options to the existing ones (without duplicating)
+    setInterests((prevInterests) => {
+      const updatedInterests = [...prevInterests];
+      selectedOptions.forEach((option) => {
+        if (!updatedInterests.includes(option)) {
+          updatedInterests.push(option); // Add the new selected interest to the array
+        }
+      });
+      return updatedInterests; // Update state with the new array
+    });
+  };
   // List of interests
   const allInterests = [
     'Music',
@@ -115,11 +138,11 @@ const SignUpPage = () => {
           className='sign-up-form'
           onSubmit={handleSubmit}>
           {/* Nickname Field */}
-          <label className='form-label'>
-            Nickname
+          <label className='register-label'>
+            User Name
             <input
               type='text'
-              placeholder='Enter nickname'
+              placeholder='Enter username'
               className='form-input'
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -128,7 +151,7 @@ const SignUpPage = () => {
           </label>
 
           {/* Email Field */}
-          <label className='form-label'>
+          <label className='register-label'>
             Email
             <input
               type='email'
@@ -141,34 +164,25 @@ const SignUpPage = () => {
           </label>
 
           {/* Password Field */}
-          <label className='form-label'>
+          <label className='register-label'>
             Password
             <div className='password-wrapper'>
               <input
-                type={passwordVisible ? 'text' : 'password'}
+                type='password'
                 placeholder='Create a password'
                 className='form-input'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <button
-                type='button'
-                className='toggle-password'
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                aria-label={
-                  passwordVisible ? 'Hide password' : 'Show password'
-                }>
-                {passwordVisible ? 'Hide' : 'Show'}
-              </button>
             </div>
           </label>
 
           {/* Confirm Password Field */}
-          <label className='form-label'>
+          <label className='register-label'>
             Confirm Password
             <input
-              type={passwordVisible ? 'text' : 'password'}
+              type='password'
               placeholder='Confirm your password'
               className='form-input'
               value={confirmPassword}
@@ -209,15 +223,37 @@ const SignUpPage = () => {
           {/* Inline Error Message */}
           {error && <div className='form-error'>{error}</div>}
 
-          {/* Sign Up Button */}
-          <button
-            type='submit'
-            className='primary-button'>
-            Sign Up
-          </button>
+          <div className='policy'>
+            <input
+              id='policy-checkbox'
+              type='checkbox'
+              checked={isPolicyChecked}
+              onChange={handleCheckboxChange}></input>
+            By signing up, you agree to our
+            <a
+              href='https://example.com/terms-of-service'
+              target='_blank'
+              rel='noopener noreferrer'>
+              Terms of Service
+            </a>
+            and
+            <a
+              href='https://example.com/privacy-policy'
+              target='_blank'
+              rel='noopener noreferrer'>
+              Privacy Policy
+            </a>
+          </div>
 
           {/* Already have an account link */}
           <div className='form-options'>
+            {/* Sign Up Button */}
+            <button
+              disabled={!isPolicyChecked}
+              type='submit'
+              className='sign-up'>
+              Sign Up
+            </button>
             <Link
               to='/login'
               className='login-link'>

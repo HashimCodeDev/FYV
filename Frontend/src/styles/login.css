@@ -72,7 +72,7 @@ html, body {
   gap: 60px;
   position: relative;
   align-self: center;
-  left: 32vw;
+  left: 35%;
 }
 
 .login-title {
@@ -111,8 +111,8 @@ html, body {
 }
 
 .form-text:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 6px var(--primary-color);
+  border-color: var(--black);
+  box-shadow: 0 0 2px var(--black);
   outline: none;
 }
 
