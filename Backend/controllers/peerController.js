@@ -53,110 +53,96 @@ exports.joinRoom = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
-
 exports.matchMake = async (req, res) => {
   const { userId } = req.body;
   console.log('User trying to match:', userId);
+
   let connectionSnapshot;
 
   try {
     console.log('Finding Match');
+
     connectionSnapshot = await db
       .collection('connection')
       .where('status', '==', 2)
       .where('userId', '!=', userId)
       .get();
-    console.log('Users Found', connectionSnapshot.docs[0]);
+
+    if (connectionSnapshot.empty) {
+      console.error('No matching documents.');
+      return res.status(200).json({ error: 'No users found for matching' });
+    }
   } catch (error) {
     console.error('Error matching users:', error);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error' });
   }
 
-  if (connectionSnapshot && connectionSnapshot.empty) {
-    console.error('No matching documents.');
-    return res.status(200).json({ error: 'No users found for matching' });
-  }
   const users = connectionSnapshot.docs.map((doc) => ({
-    userId: doc.userId,
+    userId: doc.id,
     ...doc.data(),
   }));
+
   const randomUser = users[Math.floor(Math.random() * users.length)];
   console.log('Random User Id:', randomUser.userId);
 
-  // Update user statuses to matched (1) in both sessions and matching collections
-  const batch = db.batch();
-
-  // Find the document with the userId in the 'connection' collection
-  const userDocRef = db.collection('connection').where('userId', '==', userId);
-  const randomUserDocRef = db
-    .collection('connection')
-    .where('userId', '==', randomUser.userId);
-
+  // Transaction to update user statuses
   try {
-    // Get the snapshot of the documents for both userId and randomUser.userid
-    const userSnapshot = await userDocRef.get();
-    const randomUserSnapshot = await randomUserDocRef.get();
+    await db.runTransaction(async (transaction) => {
+      const userRef = db.collection('connection').doc(userId);
+      const randomUserRef = db.collection('connection').doc(randomUser.userId);
 
-    const TEN_SECONDS = 10000; // 10 seconds in milliseconds
-    const now = new Date();
-    const tenSecondsAgo = new Date(now.getTime() - TEN_SECONDS);
+      const userDoc = await transaction.get(userRef);
+      const randomUserDoc = await transaction.get(randomUserRef);
 
-    const sessionSnapshot = await db
-      .collection('session')
-      .where('status', '==', 1) // Match active sessions
-      .where('createdAt', '>=', tenSecondsAgo) // Check if created within the last 10 seconds
-      .get();
+      if (!userDoc.exists || !randomUserDoc.exists) {
+        throw new Error('User not found');
+      }
 
-    let sessionExists = false;
+      // Update statuses to matched (1)
+      transaction.update(userRef, { status: 1 });
+      transaction.update(randomUserRef, { status: 1 });
 
-    // Loop through the results to check if a session between the same users exists
-    sessionSnapshot.forEach((doc) => {
-      const data = doc.data();
-      if (
-        (data.userId1 === userId && data.userId2 === randomUser.userId) ||
-        (data.userId1 === randomUser.userId && data.userId2 === userId)
-      ) {
-        sessionExists = true; // Found a matching session
+      const now = new Date();
+      const TEN_SECONDS = 10000; // 10 seconds in milliseconds
+      const tenSecondsAgo = new Date(now.getTime() - TEN_SECONDS);
+
+      const sessionSnapshot = await db
+        .collection('session')
+        .where('status', '==', 1)
+        .where('createdAt', '>=', tenSecondsAgo)
+        .get();
+
+      const sessionExists = sessionSnapshot.docs.some((doc) => {
+        const data = doc.data();
+        return (
+          (data.userId1 === userId && data.userId2 === randomUser.userId) ||
+          (data.userId1 === randomUser.userId && data.userId2 === userId)
+        );
+      });
+
+      if (!sessionExists) {
+        // Create new session if none exist
+        await db.collection('session').add({
+          userId1: userId,
+          peerId1: userDoc.peerId,
+          userId2: randomUser.userId,
+          peerId2: randomUser.peerId,
+          createdAt: now,
+          status: 1,
+        });
+
+        console.log('New session created');
+      } else {
+        console.log('Session already exists');
       }
     });
 
-    if (!sessionExists) {
-      // Add a new session since no matching session exists
-      await db.collection('session').add({
-        userId1: userId,
-        peerId1: userDocRef.peerId,
-        userId2: randomUser.userId,
-        peerId2: randomUserDocRef.peerId,
-        createdAt: now,
-        status: 1,
-      });
-      console.log('New session created');
-    }
-
-    if (!userSnapshot.empty && !randomUserSnapshot.empty) {
-      // Update the status of the matched user documents
-      userSnapshot.forEach((doc) => {
-        batch.update(doc.ref, { status: 1 });
-      });
-
-      randomUserSnapshot.forEach((doc) => {
-        batch.update(doc.ref, { status: 1 });
-      });
-
-      // Commit the batch update
-      await batch.commit();
-      console.log('Status updated for both users');
-    } else {
-      console.error(
-        'No matching documents found for userId or randomUser.userid'
-      );
-    }
+    console.log('Status updated for both users');
+    return res.status(200).json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
   } catch (error) {
-    console.error('Error updating status:', error);
+    console.error('Error in transaction:', error);
+    return res.status(500).json({ error: 'Server error' });
   }
-  res
-    .status(200)
-    .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
 };
 
 exports.leaveRoom = async (req, res) => {
