@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Webcam from 'react-webcam';
-import { Helmet } from 'react-helmet';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
-import { app, analytics } from '../firebase'; // Import Firebase
+import Peer from 'peerjs';
+import axios from 'axios';
 
 import '../styles/chatroom.css';
 
@@ -13,9 +12,20 @@ const Chatroom = () => {
   const [micEnabled, setMicEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
-  const socket = io('http://localhost:5000', {
-    withCredentials: true,
-  });
+  const cancelRetry = useRef(false);
+  const [loading, setLoading] = useState(true);
+
+  const [peerId, setPeerId] = useState('');
+  const [remoteId, setRemoteId] = useState('');
+  const localVideoRef = useRef();
+  const remoteVideoRef = useRef();
+  const peerInstance = useRef();
+
+  const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
+
+  const server = process.env.REACT_APP_API_URL;
+  // const server = 'https://192.168.1.3:5000';
 
   // Timer for chat duration
   useEffect(() => {
@@ -26,16 +36,16 @@ const Chatroom = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Handle incoming chat messages
-  useEffect(() => {
-    socket.on('chatMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+  // // Handle incoming chat messages
+  // useEffect(() => {
+  //   socket.on('chatMessage', (message) => {
+  //     setMessages((prevMessages) => [...prevMessages, message]);
+  //   });
 
-    return () => {
-      socket.off('chatMessage');
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off('chatMessage');
+  //   };
+  // }, [socket]);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -45,6 +55,15 @@ const Chatroom = () => {
       setMessage('');
     }
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(time + 1);
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  });
 
   // Format time as HH:MM:SS
   const formatTime = (seconds) => {
@@ -56,11 +75,27 @@ const Chatroom = () => {
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Toggle video state
-  const toggleVideo = () => setVideoEnabled((prev) => !prev);
+  const toggleVideo = () => {
+    setVideoEnabled((prev) => {
+      if (localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
+          track.enabled = !prev;
+        });
+      }
+      return !prev;
+    });
+  };
 
-  // Toggle mic state
-  const toggleMic = () => setMicEnabled((prev) => !prev);
+  const toggleMic = () => {
+    setMicEnabled((prev) => {
+      if (localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getAudioTracks().forEach((track) => {
+          track.enabled = !prev;
+        });
+      }
+      return !prev;
+    });
+  };
 
   // Send message
   const sendMessage = () => {
@@ -76,12 +111,6 @@ const Chatroom = () => {
     }
   };
 
-  // Scroll to the latest message
-  useEffect(() => {
-    const messageHistory = document.getElementById('message-history');
-    messageHistory.scrollTop = messageHistory.scrollHeight;
-  }, [messages]);
-
   // Handle enter key press to send message
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -89,164 +118,311 @@ const Chatroom = () => {
     }
   };
 
+  //Stun and Turn Servers
+  const iceConfiguration = {
+    iceServers: [
+      // Google's Public STUN Server
+      {
+        urls: 'stun:stun.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun1.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun2.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun3.l.google.com:19302',
+      },
+      {
+        urls: 'stun:stun4.l.google.com:19302',
+      },
+
+      // Mozilla's Public STUN Server
+      {
+        urls: 'stun:stun.services.mozilla.com',
+      },
+
+      // OpenRelay TURN Server
+      {
+        urls: 'turn:openrelay.metered.ca:80',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+      {
+        urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+        username: 'openrelayproject',
+        credential: 'openrelayproject',
+      },
+
+      // Twilio's Public STUN Server (optional, for testing)
+      {
+        urls: 'stun:global.stun.twilio.com:3478?transport=udp',
+      },
+
+      // Additional STUN Servers (Community-hosted)
+      {
+        urls: 'stun:stun.stunprotocol.org:3478',
+      },
+      {
+        urls: 'stun:stun.sipnet.net',
+      },
+      {
+        urls: 'stun:stun.ideasip.com',
+      },
+    ],
+  };
+
+  const leaveRoom = async () => {
+    try {
+      const response = await axios.post(
+        `${server}/api/peer/leaveroom`,
+        { userId, peerId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      cancelRetry.current = true;
+      localVideoRef.current = null;
+      remoteVideoRef.current = null;
+      navigate('/lobby');
+    } catch (e) {
+      console.error('Error leaving room:', e);
+    }
+  };
+
+  const startNextCall = async () => {
+    try {
+      const response = await axios.post(
+        `${server}/api/peer/startNextCall`,
+        { userId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      startCall();
+    } catch (e) {
+      console.error('Error starting next call:', e);
+    }
+  };
+
+  useEffect(() => {
+    const socket = io(server, {
+      withCredentials: true,
+    });
+    const peer = new Peer(undefined, {
+      host: '0.peerjs.com',
+      port: 443,
+      path: '/',
+      iceServers: [
+        // Free STUN servers
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun.services.mozilla.com' },
+        { urls: 'stun:openrelay.metered.ca:80' },
+
+        // Free TURN servers
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject',
+        },
+      ],
+    });
+
+    peer.on(
+      'open',
+      async (id) => {
+        console.log('Connected to PeerJS server with ID:', id);
+        setPeerId(id);
+
+        try {
+          const joinRoom = await axios.post(
+            `${server}/api/peer/joinRoom`,
+            { userId, peerId: id },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+          startCall();
+        } catch (error) {
+          console.error('Error joining room:', error);
+        }
+      },
+      [peerId]
+    );
+
+    peer.on('call', async (call) => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true }) // Get local media (video + audio)
+        .then((mediaStream) => {
+          call.answer(mediaStream); // Answer the call with the local media stream
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream; // Display remote video
+          });
+        });
+    });
+
+    peerInstance.current = peer;
+
+    return () => {
+      socket.close();
+      peer.disconnect();
+    };
+  }, []);
+
+  const startCall = async () => {
+    try {
+      let remoteId = null;
+
+      // Loop until a matching user is found
+      while (!remoteId) {
+        if (cancelRetry.current) {
+          return;
+        }
+        // Make a request to the server to find a matching user
+        const response = await axios.post(
+          `${server}/api/peer/matchmake`,
+          { userId },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+
+        remoteId = response.data.remoteId; // Get remoteId from the response
+
+        // If no match, wait for a few seconds before trying again
+        if (!remoteId && !cancelRetry.current) {
+          console.log('No match found. Retrying...');
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
+        }
+      }
+
+      setLoading(false);
+      setRemoteId(remoteId); // Set the remoteId once a match is found
+      console.log('Found match with remoteId:', remoteId);
+
+      // After a match is found, start the media stream and initiate the call
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+
+          // Initiate the call with the found remoteId
+          const call = peerInstance.current.call(remoteId, mediaStream);
+
+          call.on('stream', (remoteStream) => {
+            remoteVideoRef.current.srcObject = remoteStream; // Show remote video
+          });
+        })
+        .catch((err) => {
+          console.error('Error accessing media devices:', err);
+        });
+    } catch (err) {
+      console.error('Error starting call:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (micEnabled && videoEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    } else if (!micEnabled && !videoEnabled) {
+      localVideoRef.current.srcObject = null;
+    } else if (!micEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    } else if (!videoEnabled) {
+      navigator.mediaDevices
+        .getUserMedia({ video: false, audio: true })
+        .then((mediaStream) => {
+          localVideoRef.current.srcObject = mediaStream;
+        });
+    }
+  }, [micEnabled, videoEnabled]);
+
+  const Controls = () => {
+    return (
+      <div className='chatroom-controls'>
+        <button
+          onClick={toggleVideo}
+          className='video-toggle-btn'
+          aria-label={videoEnabled ? 'Turn off video' : 'Turn on video'}
+          title={videoEnabled ? 'Turn off video' : 'Turn on video'}>
+          <img
+            className='video'
+            src={
+              videoEnabled ? '/external/videoon.svg' : '/external/videooff.svg'
+            }
+            alt={videoEnabled ? 'Video on' : 'Video off'}
+          />
+        </button>
+        <button
+          onClick={toggleMic}
+          className='mic-toggle-btn'>
+          <img
+            className='mic'
+            src={micEnabled ? '/external/micon.svg' : '/external/micoff.svg'}
+            alt={micEnabled ? 'Microphone on' : 'Microphone off'}
+          />
+        </button>
+        <button
+          onClick={leaveRoom}
+          className='leave-btn'>
+          <img
+            className='exit'
+            src='/external/exit.svg'
+            alt='exit button'
+          />
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className='chatroom-container'>
-      <Helmet>
-        <title>FYV</title>
-      </Helmet>
-      <div className='chatroom-main'>
-        {/* Sidebar */}
-        <div className='chatroom-sidebar'>
-          <div className='chatroom-header'>
-            <img
-              src='/external/fyv_nobmg.png'
-              alt='FYV logo'
-              className='chatroom-logo'
-            />
-            <span className='chatroom-title'>FYV</span>
-          </div>
+      {loading && (
+        <img
+          className='loading-spinner'
+          src='/external/loading.svg'
+          alt='Loading...'
+        />
+      )}
+      <div className='chatroom-header'>
+        <div className='chatroom-logo'>
+          <img
+            className='logo'
+            src='/external/logo.png'
+          />
         </div>
-
-        {/* Main content */}
-        <div className='chatroom-content'>
-          {/* Header */}
-          <div className='chatroom-header'>
-            <div className='chatroom-left'>
-              <span className='chatroom-chatroom'>Chatroom</span>
-              <div className='chatroom-duration'>
-                <span className='chatroom-time'>({formatTime(time)})</span>
-              </div>
-            </div>
-            <div className='chatroom-right'>
-              <div className='chatroom-next-room'>
-                <span className='chatroom-next-room-text'>
-                  Next room (Spacebar)
-                </span>
-                <img
-                  src='/external/arrowforwardi424-faqf.svg'
-                  alt='Next room'
-                  className='chatroom-next-room-icon'
-                />
-              </div>
-              <img
-                src='/external/morevertical4246-xt6.svg'
-                alt='More options'
-                className='chatroom-more-options'
-              />
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className='chatroom-main-content'>
-            {/* Video Stream */}
-            <div className='chatroom-video-stream'>
-              <div className='chatroom-camera'>
-                <div className='chatroom-video-controls'>
-                  <span className='chatroom-video-disabled'>
-                    Video disabled
-                  </span>
-                  <img
-                    src='/external/eyeoff4254-1zar.svg'
-                    alt='Video disabled icon'
-                    className='chatroom-video-disabled-icon'
-                  />
-                </div>
-              </div>
-              <div className='chatroom-camera'>
-                {videoEnabled && (
-                  <Webcam
-                    audio={micEnabled}
-                    mirrored
-                    className='chatroom-webcam'
-                  />
-                )}
-              </div>
-              <div className='chatroom-controls'>
-                <div className='chatroom-middle-controls'>
-                  <div
-                    className='chatroom-video-toggle'
-                    onClick={toggleVideo}>
-                    <img
-                      src={
-                        videoEnabled
-                          ? '/external/videoon.svg'
-                          : '/external/videooff.svg'
-                      }
-                      alt='Video toggle'
-                      className='chatroom-video-icon'
-                    />
-                  </div>
-                  <div
-                    className='chatroom-mic-toggle'
-                    onClick={toggleMic}>
-                    <img
-                      src={
-                        micEnabled
-                          ? '/external/micon.svg'
-                          : '/external/micoff.svg'
-                      }
-                      alt='Mic toggle'
-                      className='chatroom-mic-icon'
-                    />
-                  </div>
-                </div>
-                <div className='chatroom-leave-room'>
-                  <Link
-                    to='/lobby'
-                    className='chatroom-leave-room-link'>
-                    <div className='chatroom-leave-room-button'>
-                      <img
-                        src='/external/closelight4264-tfpn.svg'
-                        alt='Leave room icon'
-                        className='chatroom-leave-room-icon'
-                      />
-                      <span className='chatroom-leave-room-text'>
-                        Leave Room
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Chat Section */}
-            <div className='chatroom-chat'>
-              <div
-                className='chatroom-message-history'
-                id='message-history'>
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`chatroom-message-wrap ${
-                      message.isUser ? 'user-message' : 'received-message'
-                    }`}>
-                    <div className='chatroom-message'>
-                      <span className='chatroom-message-text'>
-                        {message.text}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className='chatroom-new-message'>
-                <input
-                  type='text'
-                  placeholder='Type a message'
-                  className='chatroom-message-input'
-                  id='message-input'
-                  onKeyPress={handleKeyPress}
-                />
-                <img
-                  src='/external/send4282-eyt7.svg'
-                  alt='Send icon'
-                  className='chatroom-send-icon'
-                  onClick={sendMessage}
-                />
-              </div>
-            </div>
-          </div>
+        <div className='chatroom-title'>
+          <h1>CHAT ROOM</h1>
+          <a>{formatTime(time)}</a>
+        </div>
+        <div className='next-btn'>
+          <button onClick={startNextCall}>Next Call</button>
+          <img
+            className='next'
+            src='/external/next.svg'
+            alt='next button'
+          />
         </div>
       </div>
+      <div className='chatroom-local-screen'>
+        <video
+          className='local-video'
+          ref={localVideoRef}
+          autoPlay
+          muted></video>
+      </div>
+      <div className='chatroom-remote-screen'>
+        <video
+          ref={remoteVideoRef}
+          autoPlay></video>
+      </div>
+      <Controls />
     </div>
   );
 };
