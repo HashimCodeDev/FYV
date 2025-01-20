@@ -1,283 +1,194 @@
+:root{
+  --black-40: rgba(0, 0, 0, .4);
+  --black-60: rgba(0, 0, 0, .6);
+  --black-80: rgba(0, 0, 0, .8);
+  --black: #000;
+  --darker-gray: #484848;
+  --dark-gray: #626262;
+  --pink: #ffebe4;
+  --blue: #e4f9ff;
+  --green: #e4ffe4;
+  --gray: #e7e7e7;
+  --gray-100: #cdcdd3;
+  --gray-200: #f9f9fa;
+  --g0: #1c2226;
+  --g1: #4f5d69;
+  --g4: #bcc9d2;
+  --g5: #e0e6eb;
+  --g6: #ecf0f4;
+  --g7: #f8fafd;
+  --light-gray: #f2f2f2;
+  --lighter-gray: #f9f9f9;
+  --super-light-gray: #fbfbfb;
+  --white-80: hsla(0, 0%, 100%, .8);
+  --white: #fff;
+  --accent: #1e5af6;
+  --code-family: "IBM Plex Mono", monospace;
+  --font-family: "DM Sans", sans-serif;
+}
+
 .lobbyContainer {
-  width: 100%;
   display: flex;
-  overflow: auto;
-  min-height: 100vh;
+  justify-content: center;
   align-items: center;
-  flex-direction: column;
+  height: 100vh;
+  background: var(--g5);
+  padding: 0 20px;
+  font-family: var(--font-family);
 }
 
 .lobbyMainScreenOff {
-  width: 100%;
-  height: auto;
   display: flex;
+  width: 95vw;
+  height: 95vh;
+  max-width: 1200px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 50%);
   overflow: hidden;
-  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-  align-items: flex-start;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 1);
+  padding: 20px;
 }
 
 .lobbySidebar {
-  gap: 20px;
-  height: 1024px;
+  width: 300px;
+  background: var(--g7);
+  padding: 20px;
   display: flex;
-  overflow: hidden;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-shrink: 0;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.lobbyHeader {
-  gap: 10px;
-  display: flex;
-  padding: 20px 25px;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .lobbyLogo {
-  width: 90px;
-  height: 101px;
-}
-
-.lobbyTitle {
-  color: rgba(15, 88, 100, 1);
-  width: 100px;
+  width: 150px;
   height: auto;
-  font-size: 40px;
-  font-style: Regular;
-  text-align: center;
-  font-family: Jolly Lodger;
-  font-weight: 400;
-  line-height: normal;
-  font-stretch: normal;
-  text-decoration: none;
 }
 
 .lobbySettings {
-  gap: 10px;
-  width: 300px;
-  display: flex;
-  overflow: hidden;
-  align-items: flex-start;
-  flex-shrink: 0;
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.lobbyMenuItem {
-  gap: 10px;
-  display: flex;
-  padding: 15px 0 20px 25px;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-shrink: 0;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .lobbySettingsIcon {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.lobbySettingsIcon:hover {
+  transform: rotate(360deg);
 }
 
 .lobbySignOutButton {
-  color: rgba(50, 70, 78, 1);
-  height: auto;
-  text-align: left;
-  line-height: normal;
-  text-decoration: none;
+  position: relative;
+  top:20px;
+  color: black;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 30px;
   cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.lobbySignOutButton:hover {
+  background-color: var(--g4);
 }
 
 .lobbyMain {
-  display: flex;
-  z-index: 1;
   flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
+  display: flex;
   flex-direction: column;
+  padding: 20px;
 }
 
 .lobbyHeaderSecondary {
-  gap: 10px;
   display: flex;
-  padding: 20px 30px;
-  align-self: stretch;
-  align-items: center;
-  flex-shrink: 0;
-  border-color: rgba(249, 249, 249, 1);
-  border-style: solid;
-  border-width: 0 0 1px;
-}
-
-.lobbyLeft {
-  gap: 10px;
-  display: flex;
-  flex-grow: 1;
-  align-items: flex-end;
+  position: relative;
+  justify-content: center;
+  margin-bottom: 30px;
 }
 
 .lobbyLobbyText {
-  color: rgba(0, 122, 255, 1);
-  height: auto;
-  font-size: 28px;
-  font-style: SemiBold;
-  text-align: left;
-  font-family: Jost;
-  font-weight: 600;
-  line-height: 36px;
-  font-stretch: normal;
-  text-decoration: none;
-}
-
-.lobbyDuration {
-  gap: 10px;
-  display: flex;
-  opacity: 0.60;
-  padding: 0 0 5px;
-  align-items: flex-end;
-}
-
-.lobbyRight {
-  gap: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.lobbyContent {
-  display: flex;
-  flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
+  font-size: 2rem;
+  color: var(--g1);
 }
 
 .lobbyVideoStream {
-  gap: 20px;
   display: flex;
-  padding: 30px;
-  overflow: hidden;
-  position: relative;
-  flex-grow: 1;
-  align-self: stretch;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.lobbyFrame {
-  width: 1004px;
-  height: 268px;
-  display: flex;
-  overflow: hidden;
-  position: relative;
-  align-items: flex-start;
-  flex-shrink: 0;
-}
-
-.lobbyFrameInner {
-  gap: 10px;
-  top: 74px;
-  left: 68px;
-  width: 883px;
-  display: flex;
-  padding: 10px;
-  position: absolute;
-  align-items: center;
   justify-content: center;
-}
-
-.lobbyNoVideoText {
-  color: rgba(0, 0, 0, 1);
-  height: auto;
-  font-size: 36px;
-  font-style: Bold;
-  text-align: center;
-  font-family: Mplus 1p Bold;
-  font-weight: 700;
-  line-height: 50px;
-  font-stretch: normal;
-  text-decoration: none;
+  flex-direction: column;
+  align-items: center;
 }
 
 .lobbyJoinButton {
-  display: contents;
+  background-color: var(--white);
+  position: relative;
+  top: 50px;
+  color: black;
+  padding: 15px 30px;
+  border: 2px solid black;
+  border-radius: 30px;
   cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
 }
 
-.lobbyMessage {
-  gap: 10px;
-  width: 397px;
-  height: 94px;
+.lobbyJoinButton:hover {
+  background-color: black;
+  color: var(--white);
+}
+
+.lobbyFrameInner {
   display: flex;
-  padding: 10px 15px;
-  z-index: 1;
-  overflow: hidden;
-  align-self: center;
-  align-items: center;
-  flex-shrink: 0;
-  border-radius: 50px;
-  text-decoration: none;
-  background-color: rgba(0, 122, 255, 1);
+  justify-content: center;
+  padding: 20px;
 }
 
-.lobbyJoinText {
-  color: rgba(255, 255, 255, 1);
-  height: auto;
-  flex-grow: 1;
-  font-size: 36px;
-  font-style: Bold;
+.lobbyNoVideoText {
+  justify-self: center;
   text-align: center;
-  font-family: Mplus 1p Bold;
-  font-weight: 700;
-  line-height: 20px;
-  font-stretch: normal;
-  text-decoration: none;
+  font-family: var(--font-family);
+  font-size: 50px;
+  padding: 0px 20px;
+  letter-spacing: 0.045em;
+  -webkit-text-stroke: 2.5px;
+  transition: all 0.3s ease;
+}
+
+.lobbyNoVideoText:hover{
+  transform: scale(1.1);
+}
+
+.lobbyProfileImage img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.lobbyProfileImage:hover img {
+  transform: scale(1.1);
 }
 
 .lobbyControls {
-  gap: 20px;
-  width: 802px;
   display: flex;
-  z-index: 2;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.lobbyContent{
+  display: flex;
   position: relative;
-  align-items: center;
-  flex-shrink: 0;
-  justify-content: center;
-}
-
-.lobbyMiddle {
-  gap: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lobbyWrapper {
-  gap: 10px;
-  display: flex;
-  padding: 0 0 0 30px;
-  z-index: 1;
-  align-items: center;
   flex-direction: column;
-  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  top: 10%;
 }
 
-.lobbyProfileLink {
-  gap: 10px;
-  width: 117px;
-  height: 110px;
-  display: flex;
-  z-index: 2;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.lobbyProfileImage {
-  width: 100px;
-  height: 100px;
-  text-decoration: none;
+.lobbyMiddle,
+.lobbyWrapper {
+  width: 100%;
+  height: 5px;
+  background-color: var(--g6);
 }
