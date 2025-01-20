@@ -156,31 +156,12 @@ exports.matchMake = async (req, res) => {
     .status(200)
     .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
 };
+
 exports.leaveRoom = async (req, res) => {
   const { userId, peerId } = req.body;
 
   try {
-    const connectionSnapshot = await db
-      .collection('connection')
-      .where('userId', '==', userId)
-      .where('peerId', '==', peerId)
-      .where('status', '==', 1)
-      .get();
-
-    // Check if any matching documents exist
-    if (!connectionSnapshot.empty) {
-      // Loop through each document and update its status
-      const batch = db.batch(); // Use batch for atomic updates
-      connectionSnapshot.forEach((doc) => {
-        batch.update(doc.ref, { status: 3 });
-      });
-
-      await batch.commit(); // Commit all updates
-      console.log('Connection status updated to 3.');
-    } else {
-      console.log('No matching connection found.');
-    }
-
+    // Query sessions where the user is either userId1 or userId2
     const sessionQuery1 = db
       .collection('session')
       .where('userId1', '==', userId)
@@ -195,24 +176,44 @@ exports.leaveRoom = async (req, res) => {
       .where('status', '==', 1)
       .get();
 
-    // Run both queries in parallel
+    // Run both queries concurrently
     const sessionSnapshot = await Promise.all([sessionQuery1, sessionQuery2]);
 
-    // Combine and format the results
+    // Combine and format results
     const sessions = sessionSnapshot
-      .flatMap((snapshot) => snapshot.docs) // Combine query results
-      .map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() })); // Extract ref for updates
+      .flatMap((snapshot) => snapshot.docs)
+      .map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
 
     if (sessions.length > 0) {
-      // Update each matching session's status to 2
+      // Update each matching session's status to 3
       const updatePromises = sessions.map((session) =>
-        session.ref.update({
-          status: 2,
-        })
+        session.ref.update({ status: 3 })
       );
-
       // Wait for all updates to complete
       await Promise.all(updatePromises);
+      console.log('Session status updated to 3.');
+    } else {
+      console.log('No matching session found.');
+    }
+
+    // Check and update the connection status
+    const connectionSnapshot = await db
+      .collection('connection')
+      .where('userId', '==', userId)
+      .where('peerId', '==', peerId)
+      .where('status', '==', 1)
+      .get();
+
+    // Loop through the documents and update the status to 3
+    if (!connectionSnapshot.empty) {
+      const batch = db.batch();
+      connectionSnapshot.forEach((doc) => {
+        batch.update(doc.ref, { status: 3 });
+      });
+      await batch.commit();
+      console.log('Connection statuses updated to 3.');
+    } else {
+      console.log('No matching connection found.');
     }
 
     res.status(200).json({ message: 'User left successfully' });
