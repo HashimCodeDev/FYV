@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const authRoutes = require('./routes/authRoutes');
 const peerRoutes = require('./routes/peerRoutes');
+const { db } = require('./firebase'); // Ensure you have access to your Firebase instance
 
 const app = express();
 
@@ -57,21 +58,56 @@ app.use((err, req, res, next) => {
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
+  // Assuming you have a way to get the userId from the socket
+  socket.on('register', (userId) => {
+    socket.userId = userId;
+    console.log(`User registered with ID: ${userId}`);
+  });
+
   socket.on('disconnect', async () => {
     console.log('User disconnected:', socket.id);
 
     try {
-      // Assuming you have a way to get the userId from the socket
       const userId = socket.userId;
+      if (!userId) {
+        console.error('No userId associated with the socket.');
+        return;
+      }
 
-      // Query to find connections involving the disconnected user
+      // Query to find the session involving the disconnected user
+      const sessionSnapshot1 = await db
+        .collection('session')
+        .where('userId1', '==', userId)
+        .where('status', '==', 1)
+        .get();
+
+      const sessionSnapshot2 = await db
+        .collection('session')
+        .where('userId2', '==', userId)
+        .where('status', '==', 1)
+        .get();
+
+      const sessionSnapshot = sessionSnapshot1.empty ? sessionSnapshot2 : sessionSnapshot1;
+
+      if (sessionSnapshot.empty) {
+        console.log('No active session found for user:', userId);
+        return;
+      }
+
+      const sessionDoc = sessionSnapshot.docs[0];
+      const sessionData = sessionDoc.data();
+      const otherUserId = sessionData.userId1 === userId ? sessionData.userId2 : sessionData.userId1;
+
+      // Query to find connections involving the disconnected user and the other user
       const connectionQuery1 = db
         .collection('connection')
         .where('userId', '==', userId)
+        .where('peerId', '==', otherUserId)
         .get();
 
       const connectionQuery2 = db
         .collection('connection')
+        .where('userId', '==', otherUserId)
         .where('peerId', '==', userId)
         .get();
 
