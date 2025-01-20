@@ -194,6 +194,18 @@ const Chatroom = () => {
     }
   };
 
+  const reportUser = async () => {
+    try {
+      await axios.post(
+        `${server}/api/auth/report`,
+        { userId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+    } catch (e) {
+      console.error('Error reporting user:', e);
+    }
+  };
+
   const startNextCall = async () => {
     try {
       const response = await axios.post(
@@ -376,6 +388,9 @@ const Chatroom = () => {
             src='/external/exit.svg'
             alt='exit button'
           />
+        </button>
+        <button onClick={reportUser}>
+          <img src='/external/report.svg' />
         </button>
       </div>
     );
