@@ -185,8 +185,9 @@ const Chatroom = () => {
         { userId, peerId },
         { headers: { 'Content-Type': 'application/json' } }
       );
-
       cancelRetry.current = true;
+      localVideoRef.current = null;
+      remoteVideoRef.current = null;
       navigate('/lobby');
     } catch (e) {
       console.error('Error leaving room:', e);
