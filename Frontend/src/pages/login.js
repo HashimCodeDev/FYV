@@ -56,7 +56,8 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       if (error.response && error.response.status === 400) {
-        setError('Invalid email or password.');
+        console.log('Login error:', error.response);
+        setError(error.response.data.error);
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -130,19 +131,6 @@ const Login = () => {
             className='sign-in'>
             Log in
           </button>
-
-          {/* Sign In with ID
-          <button
-            type='button'
-            className='secondary-button'
-            onClick={handleCollegeIdSignIn}>
-            <img
-              src='/external/qrcode.png'
-              alt='QR Code Icon'
-              className='qr-icon'
-            />
-            Sign in with college ID card
-          </button> */}
         </form>
         <div className='registerButton'>
           <a>

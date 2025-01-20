@@ -13,43 +13,29 @@ exports.register = async (req, res) => {
   const { name, email, password, interests } = req.body;
 
   try {
-    const auth = getAuth();
-
-    // Create the user in Firebase Authentication
-    const userRecord = await auth.createUser({
-      email,
-      password,
-      displayName: name,
-    });
-
-    console.log('Firebase User ID:', userRecord.uid);
-
-    // Send email verification link
-    const actionCodeSettings = {
-      url: `${apiUrl}/login`,
-      handleCodeInApp: true,
-    };
-
-    await auth
-      .generateEmailVerificationLink(email, actionCodeSettings)
-      .then((link) => {
-        console.log('Verification link:', link);
-        // Here you can use a mail service like Nodemailer to send the verification link
-        // sendEmailWithVerificationLink(email, link); // Custom function to send the email
-      });
-
+    const existingUser = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
+    if (!existingUser.empty) {
+      // Check if the QuerySnapshot is not empty
+      return res.status(400).json({ error: 'User already exists' });
+    }
     // Store additional user data in Firestore
-    const userRef = db.collection('users').doc(userRecord.uid);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed password:', hashedPassword);
+    const userRef = db.collection('users').doc();
     await userRef.set({
       name,
       email,
-      interests,
+      password: hashedPassword,
+      status: 0,
       emailVerified: false, // Track verification status
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: new Date(),
     });
 
     const interestRef = db.collection('interests').doc();
-    await interestRef.set({ userId: userRecord.uid, interest: interests });
+    await interestRef.set({ userId: userRef.id, interest: interests });
 
     res.status(201).json({
       message: 'User registered successfully. Please verify your email.',
@@ -81,6 +67,10 @@ exports.login = async (req, res) => {
     }
 
     const user = userSnapshot.docs[0].data();
+
+    if (!user.emailVerified) {
+      return res.status(400).json({ error: 'Email Not Verified!' });
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res
@@ -115,22 +105,27 @@ exports.disconnect = (req, res) => {
   res.json({ message: 'Disconnect successful' });
 };
 
-exports.verify = (req, res) => {
-  const token = req.headers.authorization.split(' ')[1];
-  console.log('Token:', token);
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
+exports.verify = async (req, res) => {
+  const { email } = req.body;
   try {
-    const decoded = jwt.verify(token, config.JWT_SECRET);
-    console.log('Decoded:', decoded);
+    // Find user by email in Firestore
+    const userSnapshot = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userRef = userSnapshot.docs[0].ref; // Get the document reference
+    await userRef.update({ emailVerified: true, status: 1 }); // Update emailVerified field
+
+    res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
-    console.error('Verification error:', error);
-    return res.status(401).json({ error: 'Unauthorized' });
+    console.error('Error updating emailVerified status:', error);
+    res.status(500).json({ error: 'Server error' });
   }
-  res.json({ message: 'Verification successful' });
 };
 
 exports.scanQRCode = async (req, res) => {

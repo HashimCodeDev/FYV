@@ -3,6 +3,11 @@ import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/register.css';
 import axios from 'axios';
+import { auth } from '../firebase'; // Adjust the path to match your file structure
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from 'firebase/auth';
 
 const SignUpPage = () => {
   // State hooks for the form fields
@@ -55,9 +60,25 @@ const SignUpPage = () => {
         { headers: { 'Content-Type': 'application/json' } }
       );
       console.log(response.data);
-      // Clear error on successful validation
-      setError('');
-      navigate('/login');
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      // Send verification email
+      alert('Verification email has been sent to ' + user.email);
+      await sendEmailVerification(user).then(async () => {
+        const verificationEmail = await axios.post(
+          `${apiUrl}/api/auth/verify`,
+          { email },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+        console.log('Verification email sent successfully');
+        setError(''); // Clear any previous error
+        navigate('/login');
+      });
     } catch (error) {
       console.error('Register error:', error);
       if (error.response && error.response.status === 400) {
