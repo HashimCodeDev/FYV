@@ -124,9 +124,7 @@ exports.matchMake = async (req, res) => {
       // Add a new session since no matching session exists
       await db.collection('session').add({
         userId1: userId,
-        peerId1: userDocRef.peerId,
         userId2: randomUser.userId,
-        peerId2: randomUserDocRef.peerId,
         createdAt: now,
         status: 1,
       });
@@ -158,7 +156,6 @@ exports.matchMake = async (req, res) => {
     .status(200)
     .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
 };
-
 exports.leaveRoom = async (req, res) => {
   const { userId, peerId } = req.body;
 
