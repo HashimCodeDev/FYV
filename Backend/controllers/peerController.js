@@ -154,7 +154,7 @@ exports.matchMake = async (req, res) => {
   }
   res
     .status(200)
-    .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
+    .json({ message: 'Users matched', userId:randomUser.userId, remoteId: randomUser.peerId });
 };
 exports.leaveRoom = async (req, res) => {
   const { userId } = req.body;
