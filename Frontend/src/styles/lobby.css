@@ -147,6 +147,7 @@
 
 .lobbyNoVideoText {
   justify-self: center;
+  text-align: center;
   font-family: var(--font-family);
   font-size: 50px;
   padding: 0px 20px;
