@@ -157,20 +157,19 @@ exports.matchMake = async (req, res) => {
     .json({ message: 'Users matched', userId, remoteId: randomUser.peerId });
 };
 exports.leaveRoom = async (req, res) => {
-  const { userId } = req.body; 
+  const { userId } = req.body;
 
   try {
     console.log(`User leaving: ${userId}`);
 
-    // Initial query for active sessions involving user 1 as userId1
+    // Find active session involving the user
     let sessionSnapshot = await db
       .collection('session')
       .where('userId1', '==', userId)
       .where('status', '==', 1) 
-      .get(); 
+      .get();
 
     if (sessionSnapshot.empty) {
-      // Secondary query for sessions involving user 1 as userId2
       sessionSnapshot = await db
         .collection('session')
         .where('userId2', '==', userId)
@@ -179,7 +178,7 @@ exports.leaveRoom = async (req, res) => {
 
       if (sessionSnapshot.empty) {
         console.log('No active session found for the user.');
-        return res.status(200).json({ message: 'User left room successfully', peerId: null }); 
+        return res.status(200).json({ message: 'User left room successfully', userId, peerId: null }); 
       }
     }
 
@@ -188,50 +187,43 @@ exports.leaveRoom = async (req, res) => {
     const otherUserId = sessionData.userId1 === userId ? sessionData.userId2 : sessionData.userId1;
     console.log(`Other userId found: ${otherUserId}`);
 
-    // Update session statuses
+    // Update session statuses (within a single transaction for better consistency)
     const sessionBatch = db.batch();
     sessionSnapshot.docs.forEach((doc) => {
       console.log('Updating session status to 3 for:', doc.id);
       sessionBatch.update(doc.ref, { status: 3 }); 
     });
     await sessionBatch.commit();
-    console.log('Session statuses updated to 3.');
 
     // Update connection statuses
     const connectionQuery1 = db
       .collection('connection')
       .where('userId', '==', userId)
       .where('peerId', '==', otherUserId)
-      .where('status', '==', 1) 
-      .get();
+      .get(); // Remove 'where('status', '==', 1)' to find all connections
 
     const connectionQuery2 = db
       .collection('connection')
       .where('userId', '==', otherUserId)
       .where('peerId', '==', userId)
-      .where('status', '==', 1) 
-      .get();
+      .get(); // Remove 'where('status', '==', 1)' to find all connections
 
     const connectionSnapshot = await Promise.all([connectionQuery1, connectionQuery2]);
 
     const connections = connectionSnapshot
       .flatMap((snapshot) => snapshot.docs)
       .map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
-    console.log('Connection Docs Found:', connections);
 
     if (connections.length > 0) {
       const connectionBatch = db.batch();
       connections.forEach((doc) => {
         console.log('Updating connection status to 3 for:', doc.id);
-        connectionBatch.update(doc.ref, { status: 3 });
+        connectionBatch.update(doc.ref, { status: 3 }); 
       });
       await connectionBatch.commit();
-      console.log('Connection statuses updated to 3.');
-    } else {
-      console.log('No matching connection found.');
-    }
+    } 
 
-    res.status(200).json({ message: 'User left room successfully', peerId: otherUserId });
+    res.status(200).json({ message: 'User left room successfully', userId, peerId: otherUserId });
 
   } catch (error) {
     console.error('Error leaving room:', error);
