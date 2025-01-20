@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/register.css';
 import axios from 'axios';
@@ -109,10 +108,6 @@ const SignUpPage = () => {
 
   return (
     <div className='sign-up-container'>
-      <Helmet>
-        <title>Sign Up - FYV</title>
-      </Helmet>
-
       <div className='sign-up-form-section'>
         <h1 className='form-title'>Create an Account</h1>
 

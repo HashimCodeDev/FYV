@@ -61,25 +61,28 @@ html, body {
 }
 
 .login-form-section {
-  border: var(--g1);
   border-radius: 15px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   background-color: var(--background-color);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Adds a shadow */
   height: 80vh;
-  width: 35vw;
+  width: 30vw;
+  gap: 60px;
   position: relative;
   align-self: center;
   left: 32vw;
-  border-color: black;
 }
 
-.form-title {
+.login-title {
+  position: relative;
+  top: 20px;
+  font-family: var(--font-family);
   margin-bottom: 16px;
   align-self: center;
   color: var(--text-color);
-  font-size: 28px;
+  font-size: 50px;
   font-weight: bold;
   text-align: center;
 }
@@ -93,7 +96,7 @@ html, body {
 .form-label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 
 .form-text {
@@ -120,6 +123,19 @@ html, body {
 
 .password-wrapper .form-text {
   padding-right: 40px; /* Add padding for the toggle button */
+}
+
+.eye-icon{
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
 .toggle-password {
@@ -167,12 +183,14 @@ html, body {
 }
 
 .sign-in {
+  position: relative;
+  top: 30px;
   padding: 12px;
   width: 20vw;
   align-self: center;
   background-color: var(--background-color);
   color: var(--g0);
-  border-radius: 8px;
+  border-radius: 15px;
   border:2px solid var(--g0);
   cursor: pointer;
   font-size: 16px;
@@ -255,4 +273,16 @@ html, body {
 
 .registerButton a:hover {
   color: darkblue; /* Optional: Change color on hover for better interaction */
+}
+
+.links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links a {
+  color: #007bff; /* Link color */
+  text-decoration: none;
+  cursor: pointer;
 }

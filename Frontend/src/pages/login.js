@@ -73,7 +73,7 @@ const Login = () => {
       {loading && <img src='/external/login.gif' />}
 
       <div className='login-form-section'>
-        <h1 className='form-title'>SIGN IN</h1>
+        <h1 className='login-title'>Sign in</h1>
 
         <form
           className='login-form'
@@ -108,22 +108,20 @@ const Login = () => {
                 aria-label={
                   passwordVisible ? 'Hide password' : 'Show password'
                 }>
-                {passwordVisible ? 'Hide' : 'Show'}
+                <img
+                  className='eye-icon'
+                  src={
+                    passwordVisible
+                      ? '/external/eye-on.svg'
+                      : 'external/eye-off.svg'
+                  }
+                />
               </button>
             </div>
           </label>
 
           {/* Inline Error Message */}
           {error && <div className='form-error'>{error}</div>}
-
-          {/* Form Options */}
-          <div className='form-options'>
-            <Link
-              to='/forgot-password'
-              className='forgot-password'>
-              Forgot password?
-            </Link>
-          </div>
 
           {/* Sign In Button */}
           <button
@@ -132,12 +130,9 @@ const Login = () => {
             Log in
           </button>
         </form>
-        <div className='registerButton'>
-          <a>
-            {' '}
-            <h4>New Here</h4>{' '}
-          </a>
-          <Link to='/register'>Click here to register</Link>
+        <div className='links'>
+          <a onClick={() => navigate('/register')}>Sign Up</a>
+          <a>Forgot Password</a>
         </div>
       </div>
     </div>
