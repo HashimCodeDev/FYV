@@ -1,44 +1,66 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { db } = require('../firebase');
+const { admin, db } = require('../firebase');
 const config = require('../config');
 const qrCodeReader = require('qrcode-reader');
 const Jimp = require('jimp');
 const path = require('path');
 const fs = require('fs');
+const { getAuth } = require('firebase-admin/auth');
+const apiUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 exports.register = async (req, res) => {
   const { name, email, password, interests } = req.body;
 
   try {
-    // Check if user already exists
-    const existingUser = await db
-      .collection('users')
-      .where('email', '==', email)
-      .get();
-    if (!existingUser.empty) {
-      console.log('User already exists.');
+    const auth = getAuth();
+
+    // Create the user in Firebase Authentication
+    const userRecord = await auth.createUser({
+      email,
+      password,
+      displayName: name,
+    });
+
+    console.log('Firebase User ID:', userRecord.uid);
+
+    // Send email verification link
+    const actionCodeSettings = {
+      url: `${apiUrl}/login`,
+      handleCodeInApp: true,
+    };
+
+    await auth
+      .generateEmailVerificationLink(email, actionCodeSettings)
+      .then((link) => {
+        console.log('Verification link:', link);
+        // Here you can use a mail service like Nodemailer to send the verification link
+        // sendEmailWithVerificationLink(email, link); // Custom function to send the email
+      });
+
+    // Store additional user data in Firestore
+    const userRef = db.collection('users').doc(userRecord.uid);
+    await userRef.set({
+      name,
+      email,
+      interests,
+      emailVerified: false, // Track verification status
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    const interestRef = db.collection('interests').doc();
+    await interestRef.set({ userId: userRecord.uid, interest: interests });
+
+    res.status(201).json({
+      message: 'User registered successfully. Please verify your email.',
+    });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    if (error.code === 'auth/email-already-exists') {
       return res
         .status(400)
         .json({ error: 'User already exists with this email' });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('Hashed password:', hashedPassword);
-    const userRef = db.collection('users').doc();
-    await userRef.set({ name, email, password: hashedPassword });
-    const userSnapshot = await db
-      .collection('users')
-      .where('email', '==', email)
-      .get();
-    let userid;
-    userSnapshot.forEach((doc) => {
-      userid = doc.id;
-    });
-    const interestRef = db.collection('interests').doc();
-    await interestRef.set({ userid, interest: interests });
-
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 };
