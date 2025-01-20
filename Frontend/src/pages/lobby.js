@@ -69,7 +69,6 @@ const MainScreenOFF = (props) => {
               alt='vibenoBmg13410'
               className='lobbyLogo'
             />
-            <span className='lobbyTitle'>FYV</span>
           </div>
           <div className='lobbySettings'>
             <div className='lobbyMenuItem'>
@@ -124,8 +123,8 @@ const MainScreenOFF = (props) => {
             to='/profilesetting'
             className='lobbyProfileImage'>
             <img
-              src='/external/image26712-pg7j-200w.png'
-              alt='image26712'
+              src='/external/profile.svg'
+              alt='profile'
               className='lobbyProfileImage'
             />
           </Link>
