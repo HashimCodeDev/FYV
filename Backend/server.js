@@ -1,23 +1,42 @@
 const express = require('express');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const authRoutes = require('./routes/authRoutes');
+const peerRoutes = require('./routes/peerRoutes');
 
 const app = express();
+
+// const options = {
+//   key: fs.readFileSync('./cert.key'), // Server's private key
+//   cert: fs.readFileSync('./cert.crt'), // Server's public certificate
+//   ca: fs.readFileSync('./ca.cert'), // CA certificate for verifying the certificate chain
+// };
+
 const server = http.createServer(app);
+const apiUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+// const apiUrl = 'https://192.168.137.1:3000';
+console.log(apiUrl);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:3000', // Allow requests from your frontend's origin
-    methods: ['GET', 'POST'],
+    origin: ['http://localhost:3000', apiUrl], // Allow requests from both localhost and your frontend's origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
 });
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Allow requests from your frontend's origin
+app.use(
+  cors({
+    origin: ['http://localhost:3000', apiUrl], // Allow requests from both localhost and your frontend's origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
 app.use(bodyParser.json({ limit: '50mb' })); // Increase the limit for JSON payloads
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // Increase the limit for URL-encoded payloads
 
@@ -27,6 +46,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS =
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/peer', peerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -35,11 +55,7 @@ app.use((err, req, res, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
+  socket.on('disconnect', () => {});
 
   // Handle incoming chat messages
   socket.on('chatMessage', (message) => {

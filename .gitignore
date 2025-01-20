@@ -8,6 +8,7 @@
 # Environment variables file
 /Backend/.env
 .env
+.env.*
 
 # macOS specific files
 /.DS_Store
