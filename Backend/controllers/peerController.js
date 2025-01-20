@@ -196,18 +196,32 @@ exports.leaveRoom = async (req, res) => {
       console.log('No matching session found.');
     }
 
-    // Check and update the connection status
-    const connectionSnapshot = await db
+    // Check and update the connection status for both users
+    const connectionQuery1 = db
       .collection('connection')
       .where('userId', '==', userId)
       .where('peerId', '==', peerId)
       .where('status', '==', 1)
       .get();
 
-    // Loop through the documents and update the status to 3
-    if (!connectionSnapshot.empty) {
+    const connectionQuery2 = db
+      .collection('connection')
+      .where('userId', '==', peerId)
+      .where('peerId', '==', userId)
+      .where('status', '==', 1)
+      .get();
+
+    // Run both queries concurrently
+    const connectionSnapshot = await Promise.all([connectionQuery1, connectionQuery2]);
+
+    // Combine and format results
+    const connections = connectionSnapshot
+      .flatMap((snapshot) => snapshot.docs)
+      .map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
+
+    if (connections.length > 0) {
       const batch = db.batch();
-      connectionSnapshot.forEach((doc) => {
+      connections.forEach((doc) => {
         batch.update(doc.ref, { status: 3 });
       });
       await batch.commit();
