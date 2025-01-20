@@ -17,6 +17,7 @@ const Chatroom = () => {
 
   const [peerId, setPeerId] = useState('');
   const [remoteId, setRemoteId] = useState('');
+  const remoteUserId = useRef();
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
   const peerInstance = useRef();
@@ -79,7 +80,13 @@ const Chatroom = () => {
     setVideoEnabled((prev) => {
       if (localVideoRef.current.srcObject) {
         localVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
-          track.enabled = !prev;
+          if (prev) {
+            // Stop the track completely to release the camera
+            track.stop();
+          } else {
+            // Re-enable the video stream (if needed, recreate the stream here)
+            track.enabled = true;
+          }
         });
       }
       return !prev;
@@ -90,7 +97,12 @@ const Chatroom = () => {
     setMicEnabled((prev) => {
       if (localVideoRef.current.srcObject) {
         localVideoRef.current.srcObject.getAudioTracks().forEach((track) => {
-          track.enabled = !prev;
+          if (prev) {
+            // Stop the track completely to release the microphone
+            track.stop();
+          } else {
+            track.enabled = true;
+          }
         });
       }
       return !prev;
@@ -186,6 +198,14 @@ const Chatroom = () => {
         { headers: { 'Content-Type': 'application/json' } }
       );
       cancelRetry.current = true;
+      if (localVideoRef.current.srcObject) {
+        localVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
+          track.stop();
+        });
+        localVideoRef.current.srcObject.getAudioTracks().forEach((track) => {
+          track.stop();
+        });
+      }
       localVideoRef.current = null;
       remoteVideoRef.current = null;
       navigate('/lobby');
@@ -198,7 +218,7 @@ const Chatroom = () => {
     try {
       await axios.post(
         `${server}/api/auth/report`,
-        { userId },
+        { userId: remoteUserId.current },
         { headers: { 'Content-Type': 'application/json' } }
       );
     } catch (e) {
@@ -284,7 +304,7 @@ const Chatroom = () => {
   const startCall = async () => {
     try {
       let remoteId = null;
-
+      console.log('Cancel Retry', cancelRetry.current);
       // Loop until a matching user is found
       while (!remoteId) {
         if (cancelRetry.current) {
@@ -298,11 +318,12 @@ const Chatroom = () => {
         );
 
         remoteId = response.data.remoteId; // Get remoteId from the response
+        remoteUserId.current = response.data.userId;
 
         // If no match, wait for a few seconds before trying again
         if (!remoteId && !cancelRetry.current) {
           console.log('No match found. Retrying...');
-          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for 2 seconds before retrying
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for 2 seconds before retrying
         }
       }
 
@@ -389,9 +410,17 @@ const Chatroom = () => {
             alt='exit button'
           />
         </button>
-        <button onClick={reportUser}>
-          <img src='/external/report.svg' />
-        </button>
+        {remoteUserId.current && (
+          <button
+            className='report-btn'
+            onClick={reportUser}>
+            <img
+              className='report'
+              src='/external/report.svg'
+              alt='report button'
+            />
+          </button>
+        )}
       </div>
     );
   };
