@@ -179,7 +179,7 @@ exports.leaveRoom = async (req, res) => {
 
       if (sessionSnapshot.empty) {
         console.log('No active session found for the user.');
-        return res.status(200).json({ message: 'User left room successfully', peerId: null }); 
+        return res.status(200).json({ message: 'User left room successfully', userId, peerId: null }); 
       }
     }
 
@@ -231,7 +231,7 @@ exports.leaveRoom = async (req, res) => {
       console.log('No matching connection found.');
     }
 
-    res.status(200).json({ message: 'User left room successfully', peerId: otherUserId });
+    res.status(200).json({ message: 'User left room successfully', userId, peerId: otherUserId });
 
   } catch (error) {
     console.error('Error leaving room:', error);
