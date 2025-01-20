@@ -102,3 +102,34 @@ exports.verify = (req, res) => {
   }
   res.json({ message: 'Verification successful' });
 };
+
+exports.report = async (req, res) => {
+  const {userid } = req.body;
+
+  try {
+    const userRef = db.collection('users').doc(userid);
+    await db.runTransaction(async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists) {
+        throw new Error('User does not exist');
+      }
+
+      const userData = userDoc.data();
+      const newReportCount = (userData.reports || 0) + 1;
+      const updates = { reports: newReportCount };
+
+      if (newReportCount > 4) {
+        updates.status = 2;
+        updates.banUntil = new Date(Date.now() + 15 * 60 * 1000); // Ban for 15 minutes
+      }
+
+      transaction.update(userRef, updates);
+
+      const reportRef = db.collection('reports').doc();
+      transaction.set(reportRef, { userId, reportDetails, timestamp: new Date() });
+    });
+    res.status(201).json({ message: 'User reported successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
