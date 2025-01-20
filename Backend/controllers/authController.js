@@ -2,22 +2,40 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { db } = require('../firebase');
 const config = require('../config');
+const qrCodeReader = require('qrcode-reader');
+const Jimp = require('jimp');
+const path = require('path');
+const fs = require('fs');
 
 exports.register = async (req, res) => {
-  const {name, email, password,interests } = req.body;
+  const { name, email, password, interests } = req.body;
 
   try {
+    // Check if user already exists
+    const existingUser = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
+    if (!existingUser.empty) {
+      console.log('User already exists.');
+      return res
+        .status(400)
+        .json({ error: 'User already exists with this email' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log('Hashed password:', hashedPassword);
     const userRef = db.collection('users').doc();
-    await userRef.set({name, email, password: hashedPassword });
-    const userSnapshot = await db.collection('users').where('email', '==', email).get();
+    await userRef.set({ name, email, password: hashedPassword });
+    const userSnapshot = await db
+      .collection('users')
+      .where('email', '==', email)
+      .get();
     let userid;
-    userSnapshot.forEach(doc => {
+    userSnapshot.forEach((doc) => {
       userid = doc.id;
     });
     const interestRef = db.collection('interests').doc();
-    await interestRef.set({userid,interest:interests});
+    await interestRef.set({ userid, interest: interests });
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
@@ -56,23 +74,13 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ message: 'Login Succesful ', JwtToken: token });
+    res.json({
+      message: 'Login successful',
+      userId: userSnapshot.docs[0].id,
+      JwtToken: token,
+    });
   } catch (error) {
     console.error('Error during login:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
-
-exports.scanId = async (req, res) => {
-  const { idData } = req.body;
-
-  try {
-    const userRef = db.collection('users').doc();
-    await userRef.set({ idData });
-
-    res.status(201).json({ message: 'ID data saved successfully' });
-  } catch (error) {
-    console.error('Error saving ID data:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -101,4 +109,35 @@ exports.verify = (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   res.json({ message: 'Verification successful' });
+};
+
+exports.scanQRCode = async (req, res) => {
+  const filePath = path.join(__dirname, '..', req.file.path);
+
+  try {
+    const buffer = fs.readFileSync(filePath);
+    const image = await Jimp.read(buffer);
+    const qr = new qrCodeReader();
+
+    qr.callback = (err, value) => {
+      if (err) {
+        res.status(500).send('Error reading QR code');
+        return;
+      }
+
+      // Assuming the QR code contains JSON data
+      const details = JSON.parse(value.result);
+
+      // Print details to console
+      console.log('Extracted Details:', details);
+
+      res.json(details);
+    };
+
+    qr.decode(image.bitmap);
+  } catch (error) {
+    res.status(500).send('Error processing image');
+  } finally {
+    fs.unlinkSync(filePath); // Clean up uploaded file
+  }
 };

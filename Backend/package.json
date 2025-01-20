@@ -16,9 +16,12 @@
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "google-gax": "^4.4.1",
+    "jimp": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "peer": "^0.6.1",
     "protobufjs": "^7.4.0",
+    "qrcode-reader": "^1.0.4",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

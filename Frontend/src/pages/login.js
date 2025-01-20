@@ -11,7 +11,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  
+  const [loading, setLoading] = useState(false);
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+  // const apiUrl = 'https://192.168.137.1:5000';
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -22,8 +26,9 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        `${apiUrl}/api/auth/login`,
         { email, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -32,9 +37,10 @@ const Login = () => {
       setError('');
 
       localStorage.setItem('token', response.data.JwtToken);
+      localStorage.setItem('userId', response.data.userId);
 
       // Connect to WebSocket server
-      const socket = io('http://localhost:5000', {
+      const socket = io(apiUrl, {
         withCredentials: true,
       });
 
@@ -64,20 +70,10 @@ const Login = () => {
 
   return (
     <div className='login-container'>
-      <Helmet>
-        <title>Login - FYV</title>
-      </Helmet>
-
-      <div className='login-image-section'>
-        <img
-          src='/external/loginpage16363-yf5-900w.png'
-          alt='Login Illustration'
-          className='login-image'
-        />
-      </div>
+      {loading && <img src='/external/login.gif' />}
 
       <div className='login-form-section'>
-        <h1 className='form-title'>Nice to see you again</h1>
+        <h1 className='form-title'>SIGN IN</h1>
 
         <form
           className='login-form'
@@ -88,7 +84,7 @@ const Login = () => {
             <input
               type='email'
               placeholder='Enter email'
-              className='form-input'
+              className='form-text'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -101,7 +97,7 @@ const Login = () => {
               <input
                 type={passwordVisible ? 'text' : 'password'}
                 placeholder='Enter password'
-                className='form-input'
+                className='form-text'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -122,10 +118,6 @@ const Login = () => {
 
           {/* Form Options */}
           <div className='form-options'>
-            <label className='remember-me'>
-              <input type='checkbox' />
-              Remember me
-            </label>
             <Link
               to='/forgot-password'
               className='forgot-password'>
@@ -136,11 +128,11 @@ const Login = () => {
           {/* Sign In Button */}
           <button
             type='submit'
-            className='primary-button'>
-            Sign in
+            className='sign-in'>
+            Log in
           </button>
 
-          {/* Sign In with ID */}
+          {/* Sign In with ID
           <button
             type='button'
             className='secondary-button'
@@ -151,12 +143,15 @@ const Login = () => {
               className='qr-icon'
             />
             Sign in with college ID card
-          </button>
+          </button> */}
         </form>
-        <div className='registerButton'><a> <h4>New Here</h4> </a>
-        <Link to='/register'>Click here to register</Link>
+        <div className='registerButton'>
+          <a>
+            {' '}
+            <h4>New Here</h4>{' '}
+          </a>
+          <Link to='/register'>Click here to register</Link>
         </div>
-        
       </div>
     </div>
   );
