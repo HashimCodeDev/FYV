@@ -6,7 +6,8 @@ const {
   disconnect,
   verify,
   report,
-scanQRCode,
+  scanQRCode,
+  getUser,
 } = require('../controllers/authController');
 
 const multer = require('multer');
@@ -20,6 +21,8 @@ router.post('/logout ', logout);
 router.post('/disconnect', disconnect);
 router.post('/verify', verify);
 router.post('/report', report);
+
+router.get('/user/:userId', getUser);
 
 router.post('/scan', upload.single('idCard'), scanQRCode);
 module.exports = router;

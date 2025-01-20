@@ -1,49 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-import { Helmet } from 'react-helmet';
 import io from 'socket.io-client';
-
 import '../styles/lobby.css';
 import axios from 'axios';
 
-const MainScreenOFF = (props) => {
+const MainScreenOFF = () => {
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   const userId = localStorage.getItem('userId');
   const [loading, setLoading] = useState(false);
-
-  //   const verifyToken = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         'https://fyv-production.up.railway.app/api/auth/verify',
-  //         {
-  //           method: 'POST',
-  //           headers: {
-  //             authorization: `Bearer ${token}`,
-  //           },
-  //           body: JSON.stringify({ token }),
-  //         }
-  //       );
-
-  //       const data = await response.json();
-
-  //       if (!response.ok) {
-  //         throw new Error(data.message || 'Token verification failed');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error verifying token:', error);
-  //       navigate('/login');
-  //     }
-  //   };
-
-  // React.useEffect(() => {
-  //   if (token) {
-  //     verifyToken();
-  //   } else {
-  //     navigate('/login');
-  //   }
-  // }, [token, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,31 +17,43 @@ const MainScreenOFF = (props) => {
 
   const handleSignOut = async (event) => {
     event.preventDefault();
-    // localStorage.removeItem('token');
     navigate('/login');
   };
 
+  const getUserDetails = async (event) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/auth/users/${userId}`);
+      const data = response.data;
+      console.log('User details:', data);
+
+      // Handle user's status update from server
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
   return (
     <div className='lobbyContainer'>
-      <Helmet>
-        <title>FYV</title>
-      </Helmet>
       <div className='lobbyMainScreenOff'>
         <div className='lobbySidebar'>
           <div className='lobbyHeader'>
             <img
               src='/external/logo.png'
-              alt='vibenoBmg13410'
+              alt='FYV Logo'
               className='lobbyLogo'
             />
           </div>
           <div className='lobbySettings'>
             <div className='lobbyMenuItem'>
-              <img
+              {/* <img
                 src='/external/settings3410-plui.svg'
-                alt='settings3410'
+                alt='settings'
                 className='lobbySettingsIcon'
-              />
+              /> */}
               <button
                 to='/login'
                 onClick={handleSignOut}
@@ -90,7 +67,6 @@ const MainScreenOFF = (props) => {
           <div className='lobbyHeaderSecondary'>
             <div className='lobbyLeft'>
               <span className='lobbyLobbyText'>Lobby</span>
-              <div className='lobbyDuration'></div>
             </div>
             <div className='lobbyRight'></div>
           </div>
@@ -99,8 +75,7 @@ const MainScreenOFF = (props) => {
               <div className='lobbyFrame'>
                 <div className='lobbyFrameInner'>
                   <span className='lobbyNoVideoText'>
-                    &quot;No active video calls at the moment.&quot;&quot;Ready
-                    to connect? Click below to start fresh!&quot;
+                    "Connect with the world, one vibe at a time."
                   </span>
                 </div>
               </div>

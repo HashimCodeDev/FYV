@@ -9,6 +9,23 @@ const fs = require('fs');
 const { getAuth } = require('firebase-admin/auth');
 const apiUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
+exports.getUser = async (req, res) => {
+  try {
+    const userSnapshot = await db
+      .collection('users')
+      .doc(req.params.userId)
+      .get();
+    if (!userSnapshot.exists) {
+      console.error('No matching documents.');
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const user = userSnapshot.data();
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 exports.register = async (req, res) => {
   const { name, email, password, interests } = req.body;
 
@@ -160,7 +177,7 @@ exports.scanQRCode = async (req, res) => {
 };
 
 exports.report = async (req, res) => {
-  const {userId } = req.body;
+  const { userId } = req.body;
 
   try {
     const userRef = db.collection('users').doc(userId);
@@ -169,7 +186,7 @@ exports.report = async (req, res) => {
       if (!userDoc.exists) {
         throw new Error('User does not exist');
       }
-      
+
       const userData = userDoc.data();
       const newReportCount = (userData.reports || 0) + 1;
       const updates = { reports: newReportCount };
@@ -178,11 +195,15 @@ exports.report = async (req, res) => {
         updates.status = 2;
         updates.banUntil = new Date(Date.now() + 15 * 60 * 1000); // Ban for 15 minutes
       }
-      
+
       transaction.update(userRef, updates);
-      
+
       const reportRef = db.collection('reports').doc();
-      transaction.set(reportRef, { userId, count:newReportCount, timestamp: new Date() });
+      transaction.set(reportRef, {
+        userId,
+        count: newReportCount,
+        timestamp: new Date(),
+      });
     });
     res.status(201).json({ message: 'User reported successfully' });
   } catch (error) {
