@@ -166,24 +166,24 @@ exports.leaveRoom = async (req, res) => {
     let sessionSnapshot = await db
       .collection('session')
       .where('userId1', '==', userId)
-      .where('status', '==', 1) 
+      .where('status', '==', 1)
       .get();
 
     if (sessionSnapshot.empty) {
       sessionSnapshot = await db
         .collection('session')
         .where('userId2', '==', userId)
-        .where('status', '==', 1) 
+        .where('status', '==', 1)
         .get();
 
       if (sessionSnapshot.empty) {
         console.log('No active session found for the user.');
-        return res.status(200).json({ message: 'User left room successfully', userId, peerId: null }); 
+        return res.status(200).json({ message: 'User left room successfully', userId, peerId: null });
       }
     }
 
     // Retrieve session data and identify the other user
-    const sessionData = sessionSnapshot.docs[0].data(); 
+    const sessionData = sessionSnapshot.docs[0].data();
     const otherUserId = sessionData.userId1 === userId ? sessionData.userId2 : sessionData.userId1;
     console.log(`Other userId found: ${otherUserId}`);
 
@@ -191,37 +191,113 @@ exports.leaveRoom = async (req, res) => {
     const sessionBatch = db.batch();
     sessionSnapshot.docs.forEach((doc) => {
       console.log('Updating session status to 3 for:', doc.id);
-      sessionBatch.update(doc.ref, { status: 3 }); 
+      sessionBatch.update(doc.ref, { status: 3 });
     });
     await sessionBatch.commit();
 
     // Update connection statuses
-    const connectionQuery1 = db
-      .collection('connection')
-      .where('userId', '==', userId)
-      .where('peerId', '==', otherUserId)
-      .get(); // Remove 'where('status', '==', 1)' to find all connections
-
-    const connectionQuery2 = db
-      .collection('connection')
-      .where('userId', '==', otherUserId)
-      .where('peerId', '==', userId)
-      .get(); // Remove 'where('status', '==', 1)' to find all connections
+    const connectionQuery1 = db.collection('connection').where('userId', '==', userId).get();
+    const connectionQuery2 = db.collection('connection').where('userId', '==', otherUserId).get();
 
     const connectionSnapshot = await Promise.all([connectionQuery1, connectionQuery2]);
 
-    const connections = connectionSnapshot
-      .flatMap((snapshot) => snapshot.docs)
-      .map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
+    connectionSnapshot.forEach((snapshot, index) => {
+      console.log(`Query ${index + 1} fetched ${snapshot.docs.length} documents.`);
+    });
+
+    const connections = connectionSnapshot.flatMap((snapshot) => snapshot.docs).map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
 
     if (connections.length > 0) {
       const connectionBatch = db.batch();
       connections.forEach((doc) => {
-        console.log('Updating connection status to 3 for:', doc.id);
-        connectionBatch.update(doc.ref, { status: 3 }); 
+        console.log('Updating connection:', doc.id);
+        if (doc.userId === userId) {
+          console.log('Setting status to 3 for:', doc.id);
+          connectionBatch.update(doc.ref, { status: 3 });
+        } else if (doc.userId === otherUserId) {
+          console.log('Setting status to 2 for:', doc.id);
+          connectionBatch.update(doc.ref, { status: 2 });
+        }
       });
       await connectionBatch.commit();
-    } 
+    } else {
+      console.log('No connections found to update.');
+    }
+
+    res.status(200).json({ message: 'User left room successfully', userId, peerId: otherUserId });
+
+  } catch (error) {
+    console.error('Error leaving room:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+exports.nextCall = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    console.log(`User leaving: ${userId}`);
+
+    // Find active session involving the user
+    let sessionSnapshot = await db
+      .collection('session')
+      .where('userId1', '==', userId)
+      .where('status', '==', 1)
+      .get();
+
+    if (sessionSnapshot.empty) {
+      sessionSnapshot = await db
+        .collection('session')
+        .where('userId2', '==', userId)
+        .where('status', '==', 1)
+        .get();
+
+      if (sessionSnapshot.empty) {
+        console.log('No active session found for the user.');
+        return res.status(200).json({ message: 'User left room successfully', userId, peerId: null });
+      }
+    }
+
+    // Retrieve session data and identify the other user
+    const sessionData = sessionSnapshot.docs[0].data();
+    const otherUserId = sessionData.userId1 === userId ? sessionData.userId2 : sessionData.userId1;
+    console.log(`Other userId found: ${otherUserId}`);
+
+    // Update session statuses (within a single transaction for better consistency)
+    const sessionBatch = db.batch();
+    sessionSnapshot.docs.forEach((doc) => {
+      console.log('Updating session status to 3 for:', doc.id);
+      sessionBatch.update(doc.ref, { status: 3 });
+    });
+    await sessionBatch.commit();
+
+    // Update connection statuses
+    const connectionQuery1 = db.collection('connection').where('userId', '==', userId).get();
+    const connectionQuery2 = db.collection('connection').where('userId', '==', otherUserId).get();
+
+    const connectionSnapshot = await Promise.all([connectionQuery1, connectionQuery2]);
+
+    connectionSnapshot.forEach((snapshot, index) => {
+      console.log(`Query ${index + 1} fetched ${snapshot.docs.length} documents.`);
+    });
+
+    const connections = connectionSnapshot.flatMap((snapshot) => snapshot.docs).map((doc) => ({ id: doc.id, ref: doc.ref, ...doc.data() }));
+
+    if (connections.length > 0) {
+      const connectionBatch = db.batch();
+      connections.forEach((doc) => {
+        console.log('Updating connection:', doc.id);
+        if (doc.userId === userId) {
+          console.log('Setting status to 2 for:', doc.id);
+          connectionBatch.update(doc.ref, { status: 2 });
+        } else if (doc.userId === otherUserId) {
+          console.log('Setting status to 2 for:', doc.id);
+          connectionBatch.update(doc.ref, { status: 2 });
+        }
+      });
+      await connectionBatch.commit();
+    } else {
+      console.log('No connections found to update.');
+    }
 
     res.status(200).json({ message: 'User left room successfully', userId, peerId: otherUserId });
 
