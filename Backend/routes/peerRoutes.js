@@ -13,7 +13,7 @@ router.post('/getpeerid', getPeerId);
 router.post('/joinroom', joinRoom);
 router.post('/matchmake', matchMake);
 router.post('/leaveroom', leaveRoom);
-//router.post('/nextCall', nextCall);
+router.post('/nextCall', nextCall);
 
 
 
