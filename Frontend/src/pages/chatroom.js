@@ -229,7 +229,7 @@ const Chatroom = () => {
   const startNextCall = async () => {
     try {
       const response = await axios.post(
-        `${server}/api/peer/startNextCall`,
+        `${server}/api/peer/nextCall`,
         { userId },
         { headers: { 'Content-Type': 'application/json' } }
       );
