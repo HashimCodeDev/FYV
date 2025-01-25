@@ -44,7 +44,7 @@ html, body {
   background-color: var(--secondary-color);
 }
 
-.login-container {
+.login-container,.login-background {
   display: flex;
   flex-direction: row;
   position: relative;
@@ -54,26 +54,79 @@ html, body {
   border-radius: 15px;
 }
 
-.login-image {
-  max-width: 100%;
-  height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.overlay {
+  position: absolute; /* Place the overlay above the content */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3); /* Semi-transparent black for dark effect */
+  z-index: 1; /* Ensure it's above the background */
+}
+
+.login-background {
+  filter: blur(2px);
+  background-color: var(--gray-200);
+}
+
+.login-section{
+  position: absolute;
+  z-index: 1;
+  align-self: center;
+  display: flex;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Adds a shadow */
+  border-radius: 15px;
+  padding: 10px;
+  background: white;
+  left: 35%;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8)
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .login-form-section {
-  border-radius: 15px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   background-color: var(--background-color);
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Adds a shadow */
   height: 80vh;
   width: 30vw;
   gap: 60px;
   position: relative;
   align-self: center;
-  left: 35%;
 }
+
+.login-image-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  height: 80vh;
+  width: 30vw;
+  gap: 60px;
+  position: relative;
+  align-self: center;
+  justify-content: center;
+}
+
+.HomePage{
+  position: fixed;
+  z-index: -1;
+}
+
+.login-image {
+  max-width: 100%;
+  height: auto;
+}
+
 
 .login-title {
   position: relative;

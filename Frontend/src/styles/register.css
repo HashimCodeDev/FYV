@@ -166,7 +166,19 @@ body {
     max-width: 500px; /* Limits the width of the form */
     width: 100%; /* Ensures responsiveness */
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); /* Adds a shadow */
+    z-index: 1;
+    position: absolute;
+    animation: fadein 0.5s ease-in-out;
   } 
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {opacity: 1;}
+  }
+
   .checkbox-group {
     display: flex;
     flex-wrap: wrap; /* Arrange checkboxes in a flexible layout */
