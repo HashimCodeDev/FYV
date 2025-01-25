@@ -27,7 +27,7 @@ exports.getUser = async (req, res) => {
   }
 };
 exports.register = async (req, res) => {
-  const { name, email, password, interests } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const existingUser = await db
@@ -50,12 +50,9 @@ exports.register = async (req, res) => {
       emailVerified: false, // Track verification status
       createdAt: new Date(),
     });
-
-    const interestRef = db.collection('interests').doc();
-    await interestRef.set({ userId: userRef.id, interest: interests });
-
     res.status(201).json({
       message: 'User registered successfully. Please verify your email.',
+      userId: userRef.id,
     });
   } catch (error) {
     console.error('Error registering user:', error);
@@ -64,6 +61,19 @@ exports.register = async (req, res) => {
         .status(400)
         .json({ error: 'User already exists with this email' });
     }
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.interests = async (req, res) => {
+  const { userId, interests } = req.body;
+
+  try {
+    const interestRef = db.collection('interests').doc(userId);
+    await interestRef.set({ userId: userId, interest: interests });
+    res.status(201).json({ message: 'Interests saved successfully.' });
+  } catch (error) {
+    console.error('Error setting interests:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };

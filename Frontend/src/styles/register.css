@@ -15,7 +15,7 @@ body {
     background-color: #f4f7fa;
   }
   
-  .sign-up-form-section {
+  .sign-up-form-section,.modal {
     background-color: white;
     padding: 30px;
     border-radius: 8px;
@@ -79,9 +79,12 @@ body {
   }
   
   /* Submit Button */
-  .sign-up {
+  .sign-up,.modal-submit {
     position: relative;
+    display: flex;
     top: 30px;
+    left: 15%;
+    justify-content: center;
     padding: 12px;
     width: 20vw;
     align-self: center;
@@ -95,7 +98,7 @@ body {
     transition: background-color 0.3s ease;
   }
   
-  .sign-up:hover {
+  .sign-up:hover,.modal-submit:hover {
     background-color: var(--g0);
     color: var(--background-color);
   }
@@ -131,8 +134,12 @@ body {
   
   .login-link {
     color: #007BFF;
+    position: absolute;
     text-decoration: none;
     font-size: 14px;
+    text-align: center;
+    justify-self: anchor-center;
+    bottom: 40px;
   }
   
   .login-link:hover {
@@ -158,7 +165,7 @@ body {
     align-items: center; /* Centers the content vertically */
   }
   
-  .sign-up-form-section {
+  .sign-up-form-section,.modal {
     background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
     padding: 2rem; /* Adds padding inside the form section */
     border-radius: 10px; /* Rounded corners */
@@ -169,6 +176,7 @@ body {
     z-index: 1;
     position: absolute;
     animation: fadein 0.5s ease-in-out;
+    height: 80vh;
   } 
 
   @keyframes fadein {
@@ -177,6 +185,27 @@ body {
       transform: scale(0.8);
     }
     to {opacity: 1;}
+  }
+
+  .modal{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .modal-content{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .modal-submit{
+    width: 15vw;
+    left: 0%;
   }
 
   .checkbox-group {
