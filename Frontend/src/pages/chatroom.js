@@ -427,13 +427,13 @@ const Chatroom = () => {
 
   return (
     <div className='chatroom-container'>
-      {loading && (
+      {/* {loading && (
         <img
           className='loading-spinner'
           src='/external/loading.svg'
           alt='Loading...'
         />
-      )}
+      )} */}
       <div className='chatroom-header'>
         <div className='chatroom-logo'>
           <img
