@@ -192,11 +192,6 @@ const Chatroom = () => {
 
   const leaveRoom = async () => {
     try {
-      const response = await axios.post(
-        `${server}/api/peer/leaveroom`,
-        { userId, peerId },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
       cancelRetry.current = true;
       if (localVideoRef.current.srcObject) {
         localVideoRef.current.srcObject.getVideoTracks().forEach((track) => {
@@ -208,6 +203,11 @@ const Chatroom = () => {
       }
       localVideoRef.current = null;
       remoteVideoRef.current = null;
+      const response = await axios.post(
+        `${server}/api/peer/leaveroom`,
+        { userId, peerId },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       navigate('/lobby');
     } catch (e) {
       console.error('Error leaving room:', e);
