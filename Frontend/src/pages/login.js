@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
 import '../styles/login.css';
+import HomePage from './homepage';
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -70,75 +71,81 @@ const Login = () => {
 
   return (
     <div className='login-container'>
-      {loading && (
-        <img
-          className='loading-spinner'
-          src='/external/loading.svg'
-          alt='Loading...'
-        />
-      )}
-      <div className='login-form-section'>
-        <h1 className='login-title'>Sign in</h1>
+      <div className='overlay'></div>
+      <div className='login-background'>
+        <HomePage />
+      </div>
+      <div className='login-section'>
+        {/* <div className='login-image-container'>
+          <img
+            className='login-image'
+            src='/external/networking.svg'
+            alt='Login Image'
+          />
+        </div> */}
+        <div className='login-form-section'>
+          <h1 className='login-title'>Sign in</h1>
 
-        <form
-          className='login-form'
-          onSubmit={handleSubmit}>
-          {/* Email Field */}
-          <label className='form-label'>
-            Email
-            <input
-              type='email'
-              placeholder='Enter email'
-              className='form-text'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-
-          {/* Password Field */}
-          <label className='form-label'>
-            Password
-            <div className='password-wrapper'>
+          <form
+            className='login-form'
+            onSubmit={handleSubmit}>
+            {/* Email Field */}
+            <label className='form-label'>
+              Email
               <input
-                type={passwordVisible ? 'text' : 'password'}
-                placeholder='Enter password'
+                type='email'
+                placeholder='Enter email'
                 className='form-text'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              <button
-                type='button'
-                className='toggle-password'
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                aria-label={
-                  passwordVisible ? 'Hide password' : 'Show password'
-                }>
-                <img
-                  className='eye-icon'
-                  src={
-                    passwordVisible
-                      ? '/external/eye-on.svg'
-                      : 'external/eye-off.svg'
-                  }
+            </label>
+
+            {/* Password Field */}
+            <label className='form-label'>
+              Password
+              <div className='password-wrapper'>
+                <input
+                  type={passwordVisible ? 'text' : 'password'}
+                  placeholder='Enter password'
+                  className='form-text'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
-              </button>
-            </div>
-          </label>
+                <button
+                  type='button'
+                  className='toggle-password'
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  aria-label={
+                    passwordVisible ? 'Hide password' : 'Show password'
+                  }>
+                  <img
+                    className='eye-icon'
+                    src={
+                      passwordVisible
+                        ? '/external/eye-on.svg'
+                        : 'external/eye-off.svg'
+                    }
+                  />
+                </button>
+              </div>
+            </label>
 
-          {/* Inline Error Message */}
-          {error && <div className='form-error'>{error}</div>}
+            {/* Inline Error Message */}
+            {error && <div className='form-error'>{error}</div>}
 
-          {/* Sign In Button */}
-          <button
-            type='submit'
-            onClick={handleSubmit}
-            className='sign-in'>
-            Log in
-          </button>
-        </form>
-        <div className='links'>
-          <a onClick={() => navigate('/register')}>Sign Up</a>
-          <a>Forgot Password</a>
+            {/* Sign In Button */}
+            <button
+              type='submit'
+              onClick={handleSubmit}
+              className='sign-in'>
+              Log in
+            </button>
+          </form>
+          <div className='links'>
+            <a onClick={() => navigate('/register')}>Sign Up</a>
+            <a>Forgot Password</a>
+          </div>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from 'firebase/auth';
+import Homepage from './homepage';
 
 const SignUpPage = () => {
   // State hooks for the form fields
@@ -131,6 +132,10 @@ const SignUpPage = () => {
 
   return (
     <div className='sign-up-container'>
+      <div className='overlay'></div>
+      <div className='login-background'>
+        <Homepage />
+      </div>
       <div className='sign-up-form-section'>
         <h1 className='form-title'>Create an Account</h1>
 
