@@ -8,6 +8,7 @@ const {
   report,
   scanQRCode,
   getUser,
+  interests,
 } = require('../controllers/authController');
 
 const multer = require('multer');
@@ -21,6 +22,7 @@ router.post('/logout ', logout);
 router.post('/disconnect', disconnect);
 router.post('/verify', verify);
 router.post('/report', report);
+router.post('/interests', interests);
 
 router.get('/user/:userId', getUser);
 
