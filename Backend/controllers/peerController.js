@@ -60,13 +60,63 @@ exports.matchMake = async (req, res) => {
   let connectionSnapshot;
 
   try {
-    console.log('Finding Match');
-    connectionSnapshot = await db
-      .collection('connection')
-      .where('status', '==', 2)
-      .where('userId', '!=', userId)
-      .get();
-    console.log('Users Found', connectionSnapshot.docs[0]);
+    const getBestConnections = async (userId) => {
+      try {
+        const db = admin.firestore();
+    
+        // Step 1: Fetch user's interests
+        const userInterestsSnapshot = await db
+          .collection('interests')
+          .doc(userId)
+          .get();
+    
+        if (!userInterestsSnapshot.exists) {
+          console.log('User interests not found.');
+          return [];
+        }
+    
+        const userInterests = userInterestsSnapshot.data().interests; // Assuming interests is an array
+    
+        // Step 2: Fetch all other connections with status = 2
+        const connectionSnapshot = await db
+          .collection('connection')
+          .where('status', '==', 2)
+          .where('userId', '!=', userId)
+          .get();
+    
+        const connections = [];
+    
+        // Step 3: Calculate common interests
+        connectionSnapshot.forEach((doc) => {
+          const connectionData = doc.data();
+          const connectionInterestsSnapshot = await db
+            .collection('interests')
+            .doc(connectionData.userId)
+            .get();
+    
+          if (connectionInterestsSnapshot.exists) {
+            const connectionInterests = connectionInterestsSnapshot.data().interests;
+    
+            // Calculate intersection of interests
+            const commonInterests = userInterests.filter((interest) =>
+              connectionInterests.includes(interest)
+            );
+    
+            connections.push({
+              userId: connectionData.userId,
+              commonInterestCount: commonInterests.length,
+              commonInterests,
+            });
+          }
+        });
+    
+        // Step 4: Sort connections by the number of common interests
+        connections.sort((a, b) => b.commonInterestCount - a.commonInterestCount);
+    
+        return connections;
+      } 
+    };
+    
   } catch (error) {
     console.error('Error matching users:', error);
     res.status(500).json({ error: 'Server error' });
