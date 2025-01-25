@@ -47,7 +47,7 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
       status: 0,
-      emailVerified: false, // Track verification status
+      emailVerified: true, // Track verification status
       createdAt: new Date(),
     });
     res.status(201).json({
