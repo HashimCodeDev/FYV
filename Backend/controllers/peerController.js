@@ -291,7 +291,7 @@ exports.nextCall = async (req, res) => {
           connectionBatch.update(doc.ref, { status: 2 });
         } else if (doc.userId === otherUserId) {
           console.log('Setting status to 2 for:', doc.id);
-          connectionBatch.update(doc.ref, { status: 2 });
+          connectionBatch.update(doc.ref, { status: 3});
         }
       });
       await connectionBatch.commit();
